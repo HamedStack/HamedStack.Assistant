@@ -31,12 +31,18 @@ public static partial class ObjectExtensions
 
     public static PropertyAccessor<T> AccessProperty<T>(this T obj, string propertyName)
     {
+        if (obj == null) throw new ArgumentNullException(nameof(obj));
+        if (string.IsNullOrWhiteSpace(propertyName))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(propertyName));
         _ = obj;
         return new PropertyAccessor<T>(propertyName);
     }
 
-    public static StaticPropertyAccessor<T> AccessStaticProperty<T>(this T obj, string propertyName)
+    public static StaticPropertyAccessor<T> AccessStaticProperty<T>([DisallowNull] this T obj, string propertyName)
     {
+        if (obj == null) throw new ArgumentNullException(nameof(obj));
+        if (string.IsNullOrWhiteSpace(propertyName))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(propertyName));
         _ = obj;
         return new StaticPropertyAccessor<T>(propertyName);
     }
@@ -57,10 +63,10 @@ public static partial class ObjectExtensions
 
     public static T? As<T>(this object o) where T : class => o as T;
 
-    [SuppressMessage("Roslynator", "RCS1175:Unused 'this' parameter.", Justification = "<Pending>")]
-    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
-    public static Lazy<T> AsLazy<T>(this T obj)
+    public static Lazy<T> AsLazy<T>([DisallowNull] this T obj)
     {
+        if (obj == null) throw new ArgumentNullException(nameof(obj));
+        _ = obj;
         return new Lazy<T>();
     }
 
@@ -84,14 +90,14 @@ public static partial class ObjectExtensions
 
     public static T CastAs<T>(this object @this)
     {
-        return (T)@this;
+        return (T) @this;
     }
 
     public static T? CastAsOrDefault<T>(this object @this)
     {
         try
         {
-            return (T)@this;
+            return (T) @this;
         }
         catch (Exception)
         {
@@ -103,7 +109,7 @@ public static partial class ObjectExtensions
     {
         try
         {
-            return (T)@this;
+            return (T) @this;
         }
         catch (Exception)
         {
@@ -115,7 +121,7 @@ public static partial class ObjectExtensions
     {
         try
         {
-            return (T)@this;
+            return (T) @this;
         }
         catch (Exception)
         {
@@ -127,7 +133,7 @@ public static partial class ObjectExtensions
     {
         try
         {
-            return (T)@this;
+            return (T) @this;
         }
         catch (Exception)
         {
@@ -135,7 +141,7 @@ public static partial class ObjectExtensions
         }
     }
 
-    public static T CastTo<T>(this object o) => (T)o;
+    public static T CastTo<T>(this object o) => (T) o;
 
     public static object ChangeType(this object value, TypeCode typeCode)
     {
@@ -159,12 +165,12 @@ public static partial class ObjectExtensions
 
     public static object ChangeType<T>(this object value)
     {
-        return (T)Convert.ChangeType(value, typeof(T));
+        return (T) Convert.ChangeType(value, typeof(T));
     }
 
     public static object ChangeType<T>(this object value, IFormatProvider provider)
     {
-        return (T)Convert.ChangeType(value, typeof(T), provider);
+        return (T) Convert.ChangeType(value, typeof(T), provider);
     }
 
     public static T? Coalesce<T>(this T? @this, params T?[] values) where T : class
@@ -212,15 +218,15 @@ public static partial class ObjectExtensions
         {
             var targetType = typeof(T);
 
-            if (value.GetType() == targetType) return (T)value;
+            if (value.GetType() == targetType) return (T) value;
 
             var converter = TypeDescriptor.GetConverter(value);
             if (converter.CanConvertTo(targetType))
-                return (T?)converter.ConvertTo(value, targetType);
+                return (T?) converter.ConvertTo(value, targetType);
 
             converter = TypeDescriptor.GetConverter(targetType);
             if (converter.CanConvertFrom(value.GetType()))
-                return (T?)converter.ConvertFrom(value);
+                return (T?) converter.ConvertFrom(value);
         }
 
         return defaultValue;
@@ -251,7 +257,7 @@ public static partial class ObjectExtensions
 
     public static T[] CreateArray<T>(this T obj)
     {
-        return new[] { obj };
+        return new[] {obj};
     }
 
     public static ICollection<T> CreateCollection<T>(this T obj)
@@ -262,7 +268,7 @@ public static partial class ObjectExtensions
     public static IDictionary<TKey, TValue> CreateDictionary<TKey, TValue>(this TValue value, TKey key)
         where TKey : notnull
     {
-        return new Dictionary<TKey, TValue> { { key, value } };
+        return new Dictionary<TKey, TValue> {{key, value}};
     }
 
     public static IEnumerable<T> CreateEnumerable<T>(this T obj)
@@ -272,7 +278,7 @@ public static partial class ObjectExtensions
 
     public static IList<T> CreateList<T>(this T obj)
     {
-        return new List<T> { obj };
+        return new List<T> {obj};
     }
 
     public static IReadOnlyCollection<T> CreateReadOnlyCollection<T>(this T obj)
@@ -303,13 +309,12 @@ public static partial class ObjectExtensions
         var isEnumerable = obj.GetType().IsCollection();
         if (!isEnumerable) return obj.GetNestedPropertyValue(propertyPath, printable);
 
-        var objects = (from object? o in (IEnumerable)obj select o.GetNestedPropertyValue(propertyPath)).ToList();
+        var objects = (from object? o in (IEnumerable) obj select o.GetNestedPropertyValue(propertyPath)).ToList();
         var options = new JsonSerializerOptions
         {
             WriteIndented = true
         };
         return printable ? JsonSerializer.Serialize(objects, options) : objects;
-
     }
 
     public static TypeCode GetTypeCode(this object value)
@@ -330,13 +335,15 @@ public static partial class ObjectExtensions
     public static Type GetUnproxiedType(this object obj)
     {
         ArgumentNullException.ThrowIfNull(obj);
-        const string EFCoreProxyPrefix = "Castle.Proxies."; 
+        const string EFCoreProxyPrefix = "Castle.Proxies.";
         const string NHibernateProxyPostfix = "Proxy";
         var type = obj.GetType();
         var typeString = type.ToString();
-        if (typeString.Contains(EFCoreProxyPrefix) || typeString.EndsWith(NHibernateProxyPostfix)) return type.BaseType!;
+        if (typeString.Contains(EFCoreProxyPrefix) || typeString.EndsWith(NHibernateProxyPostfix))
+            return type.BaseType!;
         return type;
     }
+
     public static TResult? GetValueOrDefault<T, TResult>(this T @this, Func<T, TResult> func)
     {
         try
@@ -421,7 +428,7 @@ public static partial class ObjectExtensions
         if (item == null) throw new ArgumentNullException(nameof(item));
         if (action == null) throw new ArgumentNullException(nameof(action));
 
-        if (item is not T) action((T)item);
+        if (item is not T) action((T) item);
     }
 
     public static T IfNull<T>(this T obj, Action action)
@@ -767,7 +774,8 @@ public static partial class ObjectExtensions
                     var propertyWithoutIndex = propertyName[..propertyName.IndexOf('[')];
                     if (!string.IsNullOrEmpty(propertyWithoutIndex))
                     {
-                        var propertyInfo = type?.GetProperty(propertyWithoutIndex) ?? throw new InvalidOperationException();
+                        var propertyInfo = type?.GetProperty(propertyWithoutIndex) ??
+                                           throw new InvalidOperationException();
                         expr = Expression.Property(expr, propertyInfo);
                         type = propertyInfo.PropertyType;
                     }
@@ -781,7 +789,7 @@ public static partial class ObjectExtensions
 
                     // Handle array and collection types The code here constructs the necessary
                     // expression to set an indexed element
-                    if (type is { IsArray: true })
+                    if (type is {IsArray: true})
                     {
                         expr = Expression.ArrayAccess(expr, Expression.Constant(arrayIndex));
                         type = type.GetElementType();
@@ -829,12 +837,12 @@ public static partial class ObjectExtensions
         if (@this == null) throw new ArgumentNullException(nameof(@this));
 
         var method = @this.GetType().GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
-        return (T?)method?.Invoke(@this, null);
+        return (T?) method?.Invoke(@this, null);
     }
 
     public static T[] ToArrayObject<T>(this T obj)
     {
-        return new[] { obj };
+        return new[] {obj};
     }
 
     public static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(this T item)
@@ -889,7 +897,7 @@ public static partial class ObjectExtensions
             return enumerable.Cast<object?>();
         }
 
-        return new[] { obj };
+        return new[] {obj};
     }
 
     public static Expression ToObjectConstantExpression(this object value)
@@ -902,6 +910,7 @@ public static partial class ObjectExtensions
         var constant = Expression.Constant(value, typeof(object));
         return Expression.Lambda<Func<object>>(constant);
     }
+
     public static Func<object> ToObjectFunc(this object value)
     {
         return () => value;
@@ -912,6 +921,7 @@ public static partial class ObjectExtensions
         var constant = Expression.Constant(value, typeof(object));
         return Expression.Lambda<Func<object>>(constant);
     }
+
     public static TResult? Try<TType, TResult>(this TType @this, Func<TType, TResult> tryFunction)
     {
         try
@@ -1056,7 +1066,7 @@ public static partial class ObjectExtensions
     {
         yield return item;
     }
-    
+
     /// <summary>
     /// Maps properties from a source object to a destination object.
     /// </summary>
@@ -1070,7 +1080,8 @@ public static partial class ObjectExtensions
     /// This extension method provides a convenient way to copy properties from a source object to a destination object 
     /// using the <see cref="LightObjectMapper"/>. The method ensures that both source and destination objects are not null.
     /// </remarks>
-    public static TDestination MapTo<TSource, TDestination>([DisallowNull] this TSource source, [DisallowNull] TDestination destination)
+    public static TDestination MapTo<TSource, TDestination>([DisallowNull] this TSource source,
+        [DisallowNull] TDestination destination)
     {
         if (source == null) throw new ArgumentNullException(nameof(source));
         if (destination == null) throw new ArgumentNullException(nameof(destination));
@@ -1135,7 +1146,7 @@ public static partial class ObjectExtensions
                 if (int.TryParse(indexValue, out var arrayIndex))
                 {
                     // If the type is an array.
-                    if (type is { IsArray: true })
+                    if (type is {IsArray: true})
                     {
                         expr = Expression.ArrayIndex(expr, Expression.Constant(arrayIndex));
                         type = type.GetElementType();
@@ -1143,7 +1154,9 @@ public static partial class ObjectExtensions
                     // If the type is a collection.
                     else if (type != null && type.IsCollection())
                     {
-                        expr = Expression.Call(expr, type.GetMethod("get_Item") ?? throw new InvalidOperationException(), Expression.Constant(arrayIndex));
+                        expr = Expression.Call(expr,
+                            type.GetMethod("get_Item") ?? throw new InvalidOperationException(),
+                            Expression.Constant(arrayIndex));
                         type = type.GenericTypeArguments[0];
                     }
                     else
@@ -1165,7 +1178,8 @@ public static partial class ObjectExtensions
                     }
                     else
                     {
-                        keyValue = keyType.GetMethod("Parse", new[] { typeof(string) })?.Invoke(null, new object[] { indexValue });
+                        keyValue = keyType.GetMethod("Parse", new[] {typeof(string)})
+                            ?.Invoke(null, new object[] {indexValue});
                     }
 
                     if (propertyInfo2 == null) continue;
