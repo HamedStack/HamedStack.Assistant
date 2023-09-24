@@ -5,7 +5,7 @@
 
 using System.Runtime.CompilerServices;
 using HamedStack.Assistant.Extensions.QueueExtended;
-using HamedStack.Assistant.Implementations.Internal;
+using HamedStack.Assistant.Implementations.Internals;
 
 namespace HamedStack.Assistant.Extensions.TaskExtended;
 

@@ -1,7 +1,7 @@
 ﻿// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
-namespace HamedStack.Assistant.Implementations.Internal;
+namespace HamedStack.Assistant.Implementations.Internals;
 
 internal static class AsyncHelper
 {

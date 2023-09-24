@@ -15,9 +15,10 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-      <Folder Include="Abstractions\" />
-      <Folder Include="Extensions\" />
-      <Folder Include="Implementations\" />
-      <Folder Include="Utilities\" />
+        <Folder Include="Abstractions\"/>
+        <Folder Include="Enums\"/>
+        <Folder Include="Extensions\"/>
+        <Folder Include="Implementations\"/>
+        <Folder Include="Utilities\"/>
     </ItemGroup>
 </Project>

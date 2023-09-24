@@ -1,4 +1,4 @@
-﻿namespace HamedStack.Assistant.Implementations.Internal;
+﻿namespace HamedStack.Assistant.Implementations.Internals;
 
 internal class Trie
 {

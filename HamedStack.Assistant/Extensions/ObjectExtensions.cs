@@ -17,6 +17,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using HamedStack.Assistant.Extensions.TypeExtended;
 using HamedStack.Assistant.Implementations;
+using HamedStack.Assistant.Implementations.Internals;
 
 namespace HamedStack.Assistant.Extensions.ObjectExtended;
 
@@ -1054,6 +1055,31 @@ public static partial class ObjectExtensions
     public static IEnumerable<T> Yield<T>(this T item)
     {
         yield return item;
+    }
+    
+    /// <summary>
+    /// Maps properties from a source object to a destination object.
+    /// </summary>
+    /// <typeparam name="TSource">The type of the source object.</typeparam>
+    /// <typeparam name="TDestination">The type of the destination object.</typeparam>
+    /// <param name="source">The source object from which properties are to be copied.</param>
+    /// <param name="destination">The destination object to which properties will be copied.</param>
+    /// <returns>The destination object with properties mapped from the source object.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when either the source or destination is null.</exception>
+    /// <remarks>
+    /// This extension method provides a convenient way to copy properties from a source object to a destination object 
+    /// using the <see cref="LightObjectMapper"/>. The method ensures that both source and destination objects are not null.
+    /// </remarks>
+    public static TDestination MapTo<TSource, TDestination>([DisallowNull] this TSource source, [DisallowNull] TDestination destination)
+    {
+        if (source == null) throw new ArgumentNullException(nameof(source));
+        if (destination == null) throw new ArgumentNullException(nameof(destination));
+
+        var t = source.GetType();
+        var u = source.GetType();
+        var op = new LightObjectMapper();
+        op.MapTypes(t, u);
+        return destination;
     }
 
     private static object GetNestedPropertyValue(this object obj, string propertyPath, bool printable = false)

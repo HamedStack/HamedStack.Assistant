@@ -21,7 +21,7 @@ using System.Xml.Linq;
 using HamedStack.Assistant.Enums;
 using HamedStack.Assistant.Extensions.CharExtended;
 using HamedStack.Assistant.Implementations;
-using HamedStack.Assistant.Implementations.Internal;
+using HamedStack.Assistant.Implementations.Internals;
 
 
 namespace HamedStack.Assistant.Extensions.StringExtended;

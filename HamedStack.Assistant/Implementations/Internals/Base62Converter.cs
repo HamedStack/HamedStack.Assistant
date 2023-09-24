@@ -4,7 +4,7 @@
 using System.Text;
 using HamedStack.Assistant.Enums;
 
-namespace HamedStack.Assistant.Implementations.Internal;
+namespace HamedStack.Assistant.Implementations.Internals;
 
 internal class Base62Converter
 {
