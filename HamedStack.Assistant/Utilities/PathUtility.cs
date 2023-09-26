@@ -134,7 +134,7 @@ public static class PathUtility
     }
 
     /// <summary>
-    /// Gets the runtime directory where the .NET Framework assemblies are located.
+    /// Gets the runtime directory where the .NET assemblies are located.
     /// </summary>
     /// <returns>
     /// A <see cref="System.String"/> representing the runtime directory path.
@@ -142,6 +142,24 @@ public static class PathUtility
     public static string GetRuntimeDirectory()
     {
         return System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+    }
+    
+    /// <summary>
+    /// Retrieves the runtime directory of the current .NET installation
+    /// and enumerates all the .dll files within it and its subdirectories.
+    /// </summary>
+    /// <param name="assemblies">
+    /// When this method returns, contains an <see cref="IEnumerable{T}"/> of <see cref="string"/> objects
+    /// representing the full paths to all the .dll files found in the runtime directory and its subdirectories.
+    /// </param>
+    /// <returns>
+    /// A <see cref="string"/> representing the full path to the runtime directory.
+    /// </returns>
+    public static string GetRuntimeDirectory(out IEnumerable<string> assemblies)
+    {
+        var path =  System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+        assemblies = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
+        return path;
     }
 
     /// <summary>
@@ -153,7 +171,8 @@ public static class PathUtility
     /// </returns>
     public static string GetRuntimeAssemblyPath(string assemblyName)
     {
-        // Combine the runtime directory path with the assembly name to get the full path.
+        if (string.IsNullOrWhiteSpace(assemblyName))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(assemblyName));
         return Path.Combine(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory(), assemblyName);
     }
 }
