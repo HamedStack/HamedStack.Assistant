@@ -21,6 +21,7 @@ namespace HamedStack.Assistant.Extensions.EnumerableExtended;
 public static class EnumerableExtensions
 {
     private static readonly Random Rnd = new(Guid.NewGuid().GetHashCode());
+
     public static IEnumerable<T> Acquire<T>(this IEnumerable<T> source, Action acquire, Action release)
     {
         acquire();
@@ -28,10 +29,11 @@ public static class EnumerableExtensions
         {
             yield return item;
         }
+
         release();
     }
 
-	public static IEnumerable<T> Between<T>(
+    public static IEnumerable<T> Between<T>(
         this IEnumerable<T> source,
         Func<T, bool> firstCondition,
         Func<T, bool> secondCondition,
@@ -51,6 +53,7 @@ public static class EnumerableExtensions
                 excludingBetweenItems.Add(item);
                 continue;
             }
+
             if (foundFirst)
             {
                 if (secondCondition(item))
@@ -61,6 +64,7 @@ public static class EnumerableExtensions
                     foundSecond = true;
                     continue;
                 }
+
                 betweenItems.Add(item);
             }
             else if (firstCondition(item))
@@ -74,9 +78,10 @@ public static class EnumerableExtensions
                 excludingBetweenItems.Add(item);
             }
         }
+
         return betweenItems.AsEnumerable();
     }
-	
+
     public static string Aggregate<T>(this IEnumerable<T> enumeration, Func<T, string> toString, string separator)
     {
         if (toString == null)
@@ -97,7 +102,8 @@ public static class EnumerableExtensions
         return returnValue;
     }
 
-    public static TSource AggregateRight<TSource>(this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func)
+    public static TSource AggregateRight<TSource>(this IEnumerable<TSource> source,
+        Func<TSource, TSource, TSource> func)
     {
         var reversed = source.Reverse().ToList();
         return reversed.Aggregate((a, b) => func(b, a));
@@ -125,6 +131,17 @@ public static class EnumerableExtensions
             return list;
         var firstItem = list.First();
         return list.All(item => EqualityComparer<T>.Default.Equals(item, firstItem)) ? list : Enumerable.Empty<T>();
+    }
+
+    public static Dictionary<int, T> ToAutoKeyDictionary<T>(this IEnumerable<T> source)
+    {
+        if (source == null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        return source.Select((item, index) => new {Key = index, Value = item})
+            .ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 
     public static bool AllNegative(this IEnumerable<int> list)
@@ -307,7 +324,7 @@ public static class EnumerableExtensions
     public static IEnumerable<T?> AsNullable<T>(this IEnumerable<T> enumeration) where T : struct
     {
         return from item in enumeration
-               select new T?(item);
+            select new T?(item);
     }
 
     public static ReadOnlyCollection<T> AsReadOnlyCollection<T>(this IEnumerable<T>? @this)
@@ -346,7 +363,7 @@ public static class EnumerableExtensions
 
     public static IEnumerable<T> At<T>(this IEnumerable<T> enumeration, params int[] indices)
     {
-        return At(enumeration, (IEnumerable<int>)indices);
+        return At(enumeration, (IEnumerable<int>) indices);
     }
 
     public static IEnumerable<T> At<T>(this IEnumerable<T> enumeration, IEnumerable<int> indices)
@@ -400,7 +417,8 @@ public static class EnumerableExtensions
         return enumeration.Count(predicate) <= count;
     }
 
-    public static async Task<IEnumerable<TResult>> Await<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult>> selector)
+    public static async Task<IEnumerable<TResult>> Await<TSource, TResult>(this IEnumerable<TSource> source,
+        Func<TSource, Task<TResult>> selector)
     {
         var tasks = source.Select(selector).ToList();
         var results = await Task.WhenAll(tasks);
@@ -418,6 +436,7 @@ public static class EnumerableExtensions
         {
             yield return element;
         }
+
         yield return item;
     }
 
@@ -431,10 +450,10 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<IEnumerable<TResult>> BatchSelect<TFirst, TSecond, TResult>(
-         this IEnumerable<TFirst> first,
-         IEnumerable<TSecond> second,
-         Func<TFirst, TSecond, TResult> resultSelector,
-         int batchSize)
+        this IEnumerable<TFirst> first,
+        IEnumerable<TSecond> second,
+        Func<TFirst, TSecond, TResult> resultSelector,
+        int batchSize)
     {
         var batch = new List<TResult>(batchSize);
         using (var e1 = first.GetEnumerator())
@@ -450,6 +469,7 @@ public static class EnumerableExtensions
                 }
             }
         }
+
         if (batch.Count > 0)
         {
             yield return batch;
@@ -466,8 +486,8 @@ public static class EnumerableExtensions
     public static IEnumerable<(T1 left, T2 right)> Cartesian<T1, T2>(this (IEnumerable<T1>, IEnumerable<T2>) seqs)
     {
         foreach (var a in seqs.Item1)
-            foreach (var b in seqs.Item2)
-                yield return (a, b);
+        foreach (var b in seqs.Item2)
+            yield return (a, b);
     }
 
     public static IEnumerable<(T1 left, T2 right)> Cartesian<T1, T2>(this IEnumerable<T1> left, IEnumerable<T2> right)
@@ -475,7 +495,8 @@ public static class EnumerableExtensions
         return (left, right).Cartesian();
     }
 
-    public static IEnumerable<TResult> Choose<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult?> selector) where TResult : struct
+    public static IEnumerable<TResult> Choose<TSource, TResult>(this IEnumerable<TSource> source,
+        Func<TSource, TResult?> selector) where TResult : struct
     {
         foreach (var element in source)
         {
@@ -488,17 +509,17 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> source, int select,
-            bool repetition = false)
+        bool repetition = false)
     {
         if (source == null || select < 0)
             throw new ArgumentNullException();
         return select == 0
-            ? new[] { Array.Empty<T>() }
+            ? new[] {Array.Empty<T>()}
             : source.SelectMany((element, index) =>
                 source
                     .Skip(repetition ? index : index + 1)
                     .Combinations(select - 1, repetition)
-                    .Select(c => new[] { element }.Concat(c)));
+                    .Select(c => new[] {element}.Concat(c)));
     }
 
     public static int CompareCount<T>(this IEnumerable<T> first, IEnumerable<T> second)
@@ -570,14 +591,16 @@ public static class EnumerableExtensions
     {
         if (items == null) throw new ArgumentNullException(nameof(items));
         if (separator == null) throw new ArgumentNullException(nameof(separator));
-        if (typeof(T) == typeof(string)) return string.Join(separator, ((IEnumerable<string>)items).ToArray());
+        if (typeof(T) == typeof(string)) return string.Join(separator, ((IEnumerable<string>) items).ToArray());
         formatString = string.IsNullOrEmpty(formatString) ? "{0}" : $"{{0:{formatString}}}";
         return string.Join(separator, items.Select(x => string.Format(formatString, x)).ToArray());
     }
 
     public static void Consume<T>(this IEnumerable<T> source)
     {
-        foreach (var _ in source) { }
+        foreach (var _ in source)
+        {
+        }
     }
 
     public static bool Contains<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
@@ -605,8 +628,9 @@ public static class EnumerableExtensions
         return Enumerable.Count(list);
     }
 
-    public static Dictionary<TKey, int> CountBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
-    where TKey : notnull
+    public static Dictionary<TKey, int> CountBy<TSource, TKey>(this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector)
+        where TKey : notnull
     {
         var countsByKey = new Dictionary<TKey, int>();
         foreach (var x in source)
@@ -616,14 +640,15 @@ public static class EnumerableExtensions
                 countsByKey[key] = 0;
             countsByKey[key] += 1;
         }
+
         return countsByKey;
     }
 
     public static int CountDuplicates<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
     {
         return source.GroupBy(keySelector)
-                     .Where(group => group.Count() > 1)
-                     .Sum(group => group.Count() - 1);
+            .Where(group => group.Count() > 1)
+            .Sum(group => group.Count() - 1);
     }
 
     public static void Delete(this IEnumerable<FileInfo> @this)
@@ -706,11 +731,12 @@ public static class EnumerableExtensions
             throw new ArgumentException("T must be of type System.Enum");
         var enumValArray = Enum.GetValues(enumType);
         var enumValList = new List<T>(enumValArray.Length);
-        enumValList.AddRange(from int val in enumValArray select (T)Enum.Parse(enumType, val.ToString()));
+        enumValList.AddRange(from int val in enumValArray select (T) Enum.Parse(enumType, val.ToString()));
         return enumValList;
     }
 
-    public static IEnumerable<TResult> EquiZip<TFirst, TSecond, TResult>(this IEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector)
+    public static IEnumerable<TResult> EquiZip<TFirst, TSecond, TResult>(this IEnumerable<TFirst> first,
+        IEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector)
     {
         using var e1 = first.GetEnumerator();
         using var e2 = second.GetEnumerator();
@@ -753,7 +779,8 @@ public static class EnumerableExtensions
         }
     }
 
-    public static IEnumerable<TSource> ExceptBy<TSource, TKey>(this IEnumerable<TSource> first, IEnumerable<TSource> second, Func<TSource, TKey> keySelector)
+    public static IEnumerable<TSource> ExceptBy<TSource, TKey>(this IEnumerable<TSource> first,
+        IEnumerable<TSource> second, Func<TSource, TKey> keySelector)
     {
         var set = new HashSet<TKey>(second.Select(keySelector));
         foreach (var element in first)
@@ -791,7 +818,7 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<TSource> FallbackIfEmpty<TSource>(this IEnumerable<TSource> source,
-            IEnumerable<TSource> fallback)
+        IEnumerable<TSource> fallback)
     {
         if (source == null)
         {
@@ -807,7 +834,7 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<TSource> FallbackIfEmpty<TSource>(this IEnumerable<TSource> source,
-            params TSource[] fallback)
+        params TSource[] fallback)
     {
         if (source == null)
         {
@@ -819,11 +846,11 @@ public static class EnumerableExtensions
 
     public static IEnumerable<T> FallbackIfEmpty<T>(this IEnumerable<T> source, T fallback)
     {
-        return source.Any() ? source : new[] { fallback };
+        return source.Any() ? source : new[] {fallback};
     }
 
     public static IEnumerable<TSource> FallbackIfNull<TSource>(this IEnumerable<TSource> source,
-                IEnumerable<TSource> fallback)
+        IEnumerable<TSource> fallback)
     {
         if (fallback == null)
         {
@@ -834,19 +861,19 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<TSource> FallbackIfNull<TSource>(this IEnumerable<TSource> source,
-            params TSource[] fallback)
+        params TSource[] fallback)
     {
         return source ?? fallback;
     }
 
     public static IEnumerable<TSource> FallbackIfNullOrEmpty<TSource>(this IEnumerable<TSource> source,
-            IEnumerable<TSource> fallback)
+        IEnumerable<TSource> fallback)
     {
         return source.FallbackIfNull(fallback).FallbackIfEmpty(fallback);
     }
 
     public static IEnumerable<TSource> FallbackIfNullOrEmpty<TSource>(this IEnumerable<TSource> source,
-            params TSource[] fallback)
+        params TSource[] fallback)
     {
         return source.FallbackIfNull(fallback).FallbackIfEmpty(fallback);
     }
@@ -860,6 +887,7 @@ public static class EnumerableExtensions
             {
                 last = item;
             }
+
             yield return last;
         }
     }
@@ -873,6 +901,7 @@ public static class EnumerableExtensions
             {
                 last = item;
             }
+
             yield return last;
         }
     }
@@ -890,14 +919,14 @@ public static class EnumerableExtensions
 
     public static decimal FindClosest(this IEnumerable<decimal> sequence, decimal value)
     {
-        var diffList = sequence.Select(x => new { n = x, diff = Math.Abs(x - value) });
+        var diffList = sequence.Select(x => new {n = x, diff = Math.Abs(x - value)});
         var result = diffList.First(x => x.diff == diffList.Select(y => y.diff).Min());
         return result.n;
     }
 
     public static long FindClosest(this IEnumerable<long> sequence, long value)
     {
-        var diffList = sequence.Select(x => new { n = x, diff = Math.Abs(x - value) });
+        var diffList = sequence.Select(x => new {n = x, diff = Math.Abs(x - value)});
         var result = diffList.First(x => x.diff == diffList.Select(y => y.diff).Min());
         return result.n;
     }
@@ -906,7 +935,7 @@ public static class EnumerableExtensions
     {
         if (sequence == null) throw new ArgumentNullException(nameof(sequence));
 
-        var diffList = sequence.Select(x => new { n = x, diff = Math.Abs(x - value) });
+        var diffList = sequence.Select(x => new {n = x, diff = Math.Abs(x - value)});
         var result = diffList.First(x => x.diff == diffList.Select(y => y.diff).Min());
         return result.n;
     }
@@ -914,7 +943,7 @@ public static class EnumerableExtensions
     public static int FindClosest(this IEnumerable<int> sequence, int value)
     {
         if (sequence == null) throw new ArgumentNullException(nameof(sequence));
-        var diffList = sequence.Select(x => new { n = x, diff = Math.Abs(x - value) });
+        var diffList = sequence.Select(x => new {n = x, diff = Math.Abs(x - value)});
         var result = diffList.First(x => x.diff == diffList.Select(y => y.diff).Min());
         return result.n;
     }
@@ -928,28 +957,28 @@ public static class EnumerableExtensions
 
     public static decimal FindFarthest(this IEnumerable<decimal> sequence, decimal value)
     {
-        var diffList = sequence.Select(x => new { n = x, diff = Math.Abs(x - value) });
+        var diffList = sequence.Select(x => new {n = x, diff = Math.Abs(x - value)});
         var result = diffList.First(x => x.diff == diffList.Select(y => y.diff).Max());
         return result.n;
     }
 
     public static long FindFarthest(this IEnumerable<long> sequence, long value)
     {
-        var diffList = sequence.Select(x => new { n = x, diff = Math.Abs(x - value) });
+        var diffList = sequence.Select(x => new {n = x, diff = Math.Abs(x - value)});
         var result = diffList.First(x => x.diff == diffList.Select(y => y.diff).Max());
         return result.n;
     }
 
     public static double FindFarthest(this IEnumerable<double> sequence, double value)
     {
-        var diffList = sequence.Select(x => new { n = x, diff = Math.Abs(x - value) });
+        var diffList = sequence.Select(x => new {n = x, diff = Math.Abs(x - value)});
         var result = diffList.First(x => x.diff == diffList.Select(y => y.diff).Max());
         return result.n;
     }
 
     public static int FindFarthest(this IEnumerable<int> sequence, int value)
     {
-        var diffList = sequence.Select(x => new { n = x, diff = Math.Abs(x - value) });
+        var diffList = sequence.Select(x => new {n = x, diff = Math.Abs(x - value)});
         var result = diffList.First(x => x.diff == diffList.Select(y => y.diff).Max());
         return result.n;
     }
@@ -977,15 +1006,15 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<T> Flatten<T>(this T source,
-            Func<T, IEnumerable<T>> childrenSelector,
-            Func<T, object> keySelector) where T : class
+        Func<T, IEnumerable<T>> childrenSelector,
+        Func<T, object> keySelector) where T : class
     {
-        return Flatten(new[] { source }, childrenSelector, keySelector);
+        return Flatten(new[] {source}, childrenSelector, keySelector);
     }
 
     public static IEnumerable<T> Flatten<T>(this IEnumerable<T> source,
-            Func<T, IEnumerable<T>?>? getChildren,
-            Func<T, object> keySelector) where T : class
+        Func<T, IEnumerable<T>?>? getChildren,
+        Func<T, object> keySelector) where T : class
     {
         if (source == null) throw new ArgumentNullException(nameof(source));
         if (getChildren == null) throw new ArgumentNullException(nameof(getChildren));
@@ -1031,7 +1060,7 @@ public static class EnumerableExtensions
     }
 
     public static string Flatten(this IEnumerable<string> strings, string prefix, string suffix, string head,
-            string tail)
+        string tail)
     {
         return strings
             .Select(s => $"{prefix}{s}{suffix}")
@@ -1050,7 +1079,7 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<T> FlattenByQueue<T>(this IEnumerable<T> items,
-            Func<T, IEnumerable<T>?>? getChildren)
+        Func<T, IEnumerable<T>?>? getChildren)
     {
         // Queue => BFS (Breadth First Search)
         var itemsToYield = new Queue<T>(items);
@@ -1070,7 +1099,7 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<T> FlattenByStack<T>(this IEnumerable<T> items,
-            Func<T, IEnumerable<T>?>? getChildren)
+        Func<T, IEnumerable<T>?>? getChildren)
     {
         // Stack => DFS (Depth First Search)
         var stack = new Stack<T>();
@@ -1144,7 +1173,7 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<DirectoryInfo> ForEach(this IEnumerable<DirectoryInfo> @this,
-            Action<DirectoryInfo> action)
+        Action<DirectoryInfo> action)
     {
         foreach (var t in @this) action(t);
         return @this;
@@ -1239,11 +1268,11 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<TResult> FullGroupJoin<TOuter, TInner, TKey, TResult>(
-            this IEnumerable<TOuter> outer,
-            IEnumerable<TInner> inner,
-            Func<TOuter, TKey> outerKeySelector,
-            Func<TInner, TKey> innerKeySelector,
-            Func<TKey, IEnumerable<TOuter>, IEnumerable<TInner>, TResult> resultSelector)
+        this IEnumerable<TOuter> outer,
+        IEnumerable<TInner> inner,
+        Func<TOuter, TKey> outerKeySelector,
+        Func<TInner, TKey> innerKeySelector,
+        Func<TKey, IEnumerable<TOuter>, IEnumerable<TInner>, TResult> resultSelector)
     {
         var outerLookup = outer.ToLookup(outerKeySelector);
         var innerLookup = inner.ToLookup(innerKeySelector);
@@ -1267,7 +1296,7 @@ public static class EnumerableExtensions
                 inner,
                 outerKeySelector,
                 innerKeySelector,
-                (o, ie) => new { o, ie }
+                (o, ie) => new {o, ie}
             )
             .SelectMany(
                 t => t.ie.DefaultIfEmpty(),
@@ -1296,17 +1325,18 @@ public static class EnumerableExtensions
 
     public static IEnumerable<TResult> GenerateByIndex<TResult>(int start, Func<int, TResult> generator)
     {
-        for (var i = start; ; i++)
+        for (var i = start;; i++)
         {
             yield return generator(i);
         }
     }
 
-    public static IEnumerable<TSource> GetDuplicates<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    public static IEnumerable<TSource> GetDuplicates<TSource, TKey>(this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector)
     {
         return source.GroupBy(keySelector)
-                     .Where(group => group.Count() > 1)
-                     .SelectMany(group => group.Skip(1));
+            .Where(group => group.Count() > 1)
+            .SelectMany(group => group.Skip(1));
     }
 
     public static IEnumerable<T> GetDuplicates<T>(this IEnumerable<T> @this)
@@ -1316,21 +1346,21 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<IEnumerable<T>> GetKCombinations<T>(this IEnumerable<T> list, int length)
-            where T : IComparable
+        where T : IComparable
     {
-        if (length == 1) return list.Select(t => new[] { t });
+        if (length == 1) return list.Select(t => new[] {t});
         return GetKCombinations(list, length - 1)
             .SelectMany(t => list.Where(o => o.CompareTo(t.Last()) > 0),
-                (t1, t2) => t1.Concat(new[] { t2 }));
+                (t1, t2) => t1.Concat(new[] {t2}));
     }
 
     public static IEnumerable<IEnumerable<T>> GetKCombinationsWithRepetition<T>(this IEnumerable<T> list, int length)
-            where T : IComparable
+        where T : IComparable
     {
-        if (length == 1) return list.Select(t => new[] { t });
+        if (length == 1) return list.Select(t => new[] {t});
         return GetKCombinationsWithRepetition(list, length - 1)
             .SelectMany(t => list.Where(o => o.CompareTo(t.Last()) >= 0),
-                (t1, t2) => t1.Concat(new[] { t2 }));
+                (t1, t2) => t1.Concat(new[] {t2}));
     }
 
     public static IEnumerable<T> GetNoNullItems<T>(this IEnumerable<T?> list) where T : class
@@ -1340,21 +1370,22 @@ public static class EnumerableExtensions
 
     public static IEnumerable<IEnumerable<T>> GetPermutations<T>(this IEnumerable<T> list, int length)
     {
-        if (length == 1) return list.Select(t => new[] { t });
+        if (length == 1) return list.Select(t => new[] {t});
         return GetPermutations(list, length - 1)
             .SelectMany(t => list.Where(o => !t.Contains(o)),
-                (t1, t2) => t1.Concat(new[] { t2 }));
+                (t1, t2) => t1.Concat(new[] {t2}));
     }
 
     public static IEnumerable<IEnumerable<T>> GetPermutationsWithRepetition<T>(this IEnumerable<T> list, int length)
     {
-        if (length == 1) return list.Select(t => new[] { t });
+        if (length == 1) return list.Select(t => new[] {t});
         return GetPermutationsWithRepetition(list, length - 1)
             .SelectMany(_ => list,
-                (t1, t2) => t1.Concat(new[] { t2 }));
+                (t1, t2) => t1.Concat(new[] {t2}));
     }
 
-    public static IEnumerable<IGrouping<TKey?, TSource>> GroupAdjacent<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    public static IEnumerable<IGrouping<TKey?, TSource>> GroupAdjacent<TSource, TKey>(this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector)
     {
         TKey? key = default;
         TKey? comparer = default;
@@ -1365,7 +1396,7 @@ public static class EnumerableExtensions
             if (list.Count > 0 && !EqualityComparer<TKey>.Default.Equals(k, key))
             {
                 yield return new Grouping<TKey?, TSource>(comparer, list);
-                list = new List<TSource> { item };
+                list = new List<TSource> {item};
                 key = k;
             }
             else
@@ -1373,8 +1404,10 @@ public static class EnumerableExtensions
                 if (list.Count == 0) key = k;
                 list.Add(item);
             }
+
             comparer = key;
         }
+
         if (list.Count > 0)
             yield return new Grouping<TKey?, TSource>(comparer, list);
     }
@@ -1412,9 +1445,9 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<T> If<T>(
-            this IEnumerable<T> query,
-            bool should,
-            params Func<IEnumerable<T>, IEnumerable<T>>[] transforms)
+        this IEnumerable<T> query,
+        bool should,
+        params Func<IEnumerable<T>, IEnumerable<T>>[] transforms)
     {
         return should
             ? transforms.Aggregate(query,
@@ -1469,7 +1502,8 @@ public static class EnumerableExtensions
         return source.Select((value, index) => (index, value));
     }
 
-    public static IEnumerable<(TKey key, int index, TSource element)> IndexBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    public static IEnumerable<(TKey key, int index, TSource element)> IndexBy<TSource, TKey>(
+        this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
     {
         return source.Select((element, index) => (keySelector(element), index, element));
     }
@@ -1500,6 +1534,7 @@ public static class EnumerableExtensions
                 return i;
             i++;
         }
+
         return -1;
     }
 
@@ -1517,8 +1552,8 @@ public static class EnumerableExtensions
     public static IEnumerable<int> IndicesOf<T>(this IEnumerable<T> obj, IEnumerable<T> value)
     {
         return from i in Enumerable.Range(0, obj.Count())
-               where value.Contains(obj.ElementAt(i))
-               select i;
+            where value.Contains(obj.ElementAt(i))
+            select i;
     }
 
     public static IEnumerable<int> IndicesWhere<T>(this IEnumerable<T> enumeration, Func<T, bool> predicate)
@@ -1573,7 +1608,7 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<TSource> Intersperse<TSource>(this IEnumerable<TSource> source, TSource separator,
-                    int count = 1)
+        int count = 1)
     {
         var isFirst = true;
 
@@ -1595,7 +1630,7 @@ public static class EnumerableExtensions
     }
 
     public static bool IsCountEqual<TSource>(this IEnumerable<TSource> source, int expectedCount,
-            Func<TSource, bool> predicate)
+        Func<TSource, bool> predicate)
     {
         return source.Where(predicate).Take(expectedCount + 1).Count() == expectedCount;
     }
@@ -1606,7 +1641,7 @@ public static class EnumerableExtensions
     }
 
     public static bool IsCountGreater<TSource>(this IEnumerable<TSource> source, int comparisonCount,
-            Func<TSource, bool> predicate)
+        Func<TSource, bool> predicate)
     {
         return source.Where(predicate).Skip(comparisonCount).Any();
     }
@@ -1617,7 +1652,7 @@ public static class EnumerableExtensions
     }
 
     public static bool IsCountSmaller<TSource>(this IEnumerable<TSource> source, int comparisonCount,
-            Func<TSource, bool> predicate)
+        Func<TSource, bool> predicate)
     {
         return !source.Where(predicate).Skip(comparisonCount - 1).Any();
     }
@@ -1640,7 +1675,7 @@ public static class EnumerableExtensions
     }
 
     public static bool IsEqual<T>(this IEnumerable<T>? source, IEnumerable<T>? toCompareWith,
-            IEqualityComparer<T>? comparer)
+        IEqualityComparer<T>? comparer)
     {
         if (source == null || toCompareWith == null) return false;
         var countSource = source.Count();
@@ -1747,7 +1782,8 @@ public static class EnumerableExtensions
         return string.Join(separator, collection.Select(func).ToArray());
     }
 
-    public static IEnumerable<(TSource? element, TSource? lag)> Lag<TSource>(this IEnumerable<TSource> source, TSource? defaultValue = default)
+    public static IEnumerable<(TSource? element, TSource? lag)> Lag<TSource>(this IEnumerable<TSource> source,
+        TSource? defaultValue = default)
     {
         var lag = defaultValue;
         foreach (var element in source)
@@ -1778,7 +1814,8 @@ public static class EnumerableExtensions
         return source.LastIndexOf(i => comparer.Equals(i, element));
     }
 
-    public static IEnumerable<(TSource? element, TSource? lead)> Lead<TSource>(this IEnumerable<TSource> source, TSource? defaultValue = default)
+    public static IEnumerable<(TSource? element, TSource? lead)> Lead<TSource>(this IEnumerable<TSource> source,
+        TSource? defaultValue = default)
     {
         using var e = source.GetEnumerator();
         if (!e.MoveNext())
@@ -1792,6 +1829,7 @@ public static class EnumerableExtensions
             yield return (lead, e.Current);
             lead = e.Current;
         }
+
         yield return (lead, defaultValue);
     }
 
@@ -1803,21 +1841,21 @@ public static class EnumerableExtensions
         Func<TOuter, TInner?, TResult> resultSelector)
     {
         return outer.GroupJoin(
-            inner,
-            outerKeySelector,
-            innerKeySelector,
-            (outerElement, innerElements) => innerElements
-                .Select(innerElement => resultSelector(outerElement, innerElement))
-                .DefaultIfEmpty(resultSelector(outerElement, default)))
+                inner,
+                outerKeySelector,
+                innerKeySelector,
+                (outerElement, innerElements) => innerElements
+                    .Select(innerElement => resultSelector(outerElement, innerElement))
+                    .DefaultIfEmpty(resultSelector(outerElement, default)))
             .SelectMany(result => result);
     }
 
     public static IEnumerable<TResult> LeftOuterJoin<TLeft, TRight, TKey, TResult>(
-                    this IEnumerable<TLeft> left,
-            IEnumerable<TRight> right,
-            Func<TLeft, TKey> leftKeySelector,
-            Func<TRight, TKey> rightKeySelector,
-            Func<JoinResult<TLeft, TRight>, TResult> resultSelector)
+        this IEnumerable<TLeft> left,
+        IEnumerable<TRight> right,
+        Func<TLeft, TKey> leftKeySelector,
+        Func<TRight, TKey> rightKeySelector,
+        Func<JoinResult<TLeft, TRight>, TResult> resultSelector)
     {
         var groupJoinResult = left
             .GroupJoin(
@@ -1871,6 +1909,7 @@ public static class EnumerableExtensions
     {
         return @this.SelectMany(func);
     }
+
     public static TSource? Max<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
     {
         if (source == null) throw new ArgumentNullException(nameof(source));
@@ -1886,9 +1925,9 @@ public static class EnumerableExtensions
     }
 
     public static TItem? MaxItem<TItem, TValue>(this IEnumerable<TItem?> items, Func<TItem, TValue> selector,
-                out TValue? maxValue)
-            where TItem : class
-            where TValue : IComparable
+        out TValue? maxValue)
+        where TItem : class
+        where TValue : IComparable
     {
         TItem? maxItem = null;
         maxValue = default;
@@ -1909,14 +1948,14 @@ public static class EnumerableExtensions
     }
 
     public static TItem? MaxItem<TItem, TValue>(this IEnumerable<TItem?> items, Func<TItem, TValue> selector)
-            where TItem : class
-            where TValue : IComparable
+        where TItem : class
+        where TValue : IComparable
     {
         return items.MaxItem(selector, out _);
     }
 
     public static IEnumerable<TSource>? Maxs<TSource, TResult>(this IEnumerable<TSource> source,
-            Func<TSource, TResult> selector)
+        Func<TSource, TResult> selector)
     {
         return source.ToLookup(selector).Max(n => n.Key);
     }
@@ -1996,9 +2035,9 @@ public static class EnumerableExtensions
     }
 
     public static TItem? MinItem<TItem, TValue>(this IEnumerable<TItem?> items, Func<TItem, TValue> selector,
-                out TValue? minValue)
-            where TItem : class
-            where TValue : IComparable
+        out TValue? minValue)
+        where TItem : class
+        where TValue : IComparable
     {
         TItem? minItem = null;
         minValue = default;
@@ -2017,8 +2056,8 @@ public static class EnumerableExtensions
     }
 
     public static TItem? MinItem<TItem, TValue>(this IEnumerable<TItem?> items, Func<TItem, TValue> selector)
-            where TItem : class
-            where TValue : IComparable
+        where TItem : class
+        where TValue : IComparable
     {
         return items.MinItem(selector, out _);
     }
@@ -2035,11 +2074,12 @@ public static class EnumerableExtensions
             if (item.CompareTo(min) < 0) min = item;
             if (item.CompareTo(max) > 0) max = item;
         }
+
         return (min, max);
     }
 
     public static IEnumerable<TSource>? Mins<TSource, TResult>(this IEnumerable<TSource> source,
-                Func<TSource, TResult> selector)
+        Func<TSource, TResult> selector)
     {
         return source.ToLookup(selector).Min(n => n.Key);
     }
@@ -2083,12 +2123,14 @@ public static class EnumerableExtensions
         return source.DefaultIfEmpty(default);
     }
 
-    public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, bool ascending = true)
+    public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector, bool ascending = true)
     {
         return ascending ? source.OrderBy(keySelector) : source.OrderByDescending(keySelector);
     }
 
-    public static IEnumerable<T> OrderedMerge<T>(this IEnumerable<T> first, IEnumerable<T> second, IComparer<T>? comparer = null)
+    public static IEnumerable<T> OrderedMerge<T>(this IEnumerable<T> first, IEnumerable<T> second,
+        IComparer<T>? comparer = null)
     {
         using var firstEnumerator = first.GetEnumerator();
         using var secondEnumerator = second.GetEnumerator();
@@ -2142,7 +2184,8 @@ public static class EnumerableExtensions
         return Enumerable.Repeat(value, Math.Max(0, width - source.Count())).Concat(source);
     }
 
-    public static IEnumerable<TResult> Pairwise<TSource, TResult>(this IEnumerable<TSource?> source, Func<TSource?, TSource?, TResult> selector)
+    public static IEnumerable<TResult> Pairwise<TSource, TResult>(this IEnumerable<TSource?> source,
+        Func<TSource?, TSource?, TResult> selector)
     {
         TSource? previous = default;
         var isFirst = true;
@@ -2169,18 +2212,20 @@ public static class EnumerableExtensions
         return source.OrderBy(x => x, comparer).Take(count);
     }
 
-    public static IEnumerable<T> PartialSortBy<T, TKey>(this IEnumerable<T> source, int count, Func<T, TKey> keySelector) where TKey : IComparable<TKey>
+    public static IEnumerable<T> PartialSortBy<T, TKey>(this IEnumerable<T> source, int count,
+        Func<T, TKey> keySelector) where TKey : IComparable<TKey>
     {
         return source.OrderBy(keySelector).Take(count);
     }
 
-    public static IEnumerable<T> PartialSortBy<T, TKey>(this IEnumerable<T> source, int count, Func<T, TKey> keySelector, IComparer<TKey> comparer)
+    public static IEnumerable<T> PartialSortBy<T, TKey>(this IEnumerable<T> source, int count,
+        Func<T, TKey> keySelector, IComparer<TKey> comparer)
     {
         return source.OrderBy(keySelector, comparer).Take(count);
     }
 
     public static PartitionedSequence<TSource> Partition<TSource>(this IEnumerable<TSource> source,
-                    Func<TSource, bool> predicate)
+        Func<TSource, bool> predicate)
     {
         var matches = new List<TSource>();
         var mismatches = new List<TSource>();
@@ -2206,13 +2251,15 @@ public static class EnumerableExtensions
                 partition = new List<T>(size);
             }
         }
+
         if (partition.Count > 0)
         {
             yield return partition;
         }
     }
 
-    public static (IEnumerable<T> True, IEnumerable<T> False) PartitionBlock<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+    public static (IEnumerable<T> True, IEnumerable<T> False) PartitionBlock<T>(this IEnumerable<T> source,
+        Func<T, bool> predicate)
     {
         var trueList = new List<T>();
         var falseList = new List<T>();
@@ -2232,7 +2279,8 @@ public static class EnumerableExtensions
         return (trueList, falseList);
     }
 
-    public static IEnumerable<IGrouping<TKey?, TSource>> PartitionBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    public static IEnumerable<IGrouping<TKey?, TSource>> PartitionBy<TSource, TKey>(this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector)
     {
         TKey? key = default;
         TKey? comparer = default;
@@ -2243,7 +2291,7 @@ public static class EnumerableExtensions
             if (list.Count > 0 && !EqualityComparer<TKey>.Default.Equals(k, key))
             {
                 yield return new Grouping<TKey?, TSource>(comparer, list);
-                list = new List<TSource> { item };
+                list = new List<TSource> {item};
                 key = k;
             }
             else
@@ -2251,8 +2299,10 @@ public static class EnumerableExtensions
                 if (list.Count == 0) key = k;
                 list.Add(item);
             }
+
             comparer = key;
         }
+
         if (list.Count > 0)
             yield return new Grouping<TKey?, TSource>(comparer, list);
     }
@@ -2272,10 +2322,10 @@ public static class EnumerableExtensions
         var fraction = index - whole;
 
         if (whole == sorted.Count - 1)
-            return sorted[(int)whole];
+            return sorted[(int) whole];
 
-        var lower = sorted[(int)whole];
-        var upper = sorted[(int)whole + 1];
+        var lower = sorted[(int) whole];
+        var upper = sorted[(int) whole + 1];
 
         return lower + ((upper - lower) * fraction);
     }
@@ -2357,6 +2407,7 @@ public static class EnumerableExtensions
         {
             return default;
         }
+
         return sequence.ElementAt(Rnd.Next(0, sequence.Count()));
     }
 
@@ -2389,11 +2440,12 @@ public static class EnumerableExtensions
             throw new ArgumentNullException(nameof(source));
 
         return source.Select(item => (item, rank: 1))
-                     .OrderBy(tuple => tuple.item)
-                     .Select((tuple, index) => (tuple.item, rank: index + 1));
+            .OrderBy(tuple => tuple.item)
+            .Select((tuple, index) => (tuple.item, rank: index + 1));
     }
 
-    public static IEnumerable<(T item, int rank)> RankBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector) where TKey : IComparable<TKey>
+    public static IEnumerable<(T item, int rank)> RankBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector)
+        where TKey : IComparable<TKey>
     {
         if (source == null)
             throw new ArgumentNullException(nameof(source));
@@ -2401,8 +2453,8 @@ public static class EnumerableExtensions
             throw new ArgumentNullException(nameof(keySelector));
 
         return source.Select(item => (item, key: keySelector(item)))
-                     .OrderBy(tuple => tuple.key)
-                     .Select((tuple, index) => (tuple.item, rank: index + 1));
+            .OrderBy(tuple => tuple.key)
+            .Select((tuple, index) => (tuple.item, rank: index + 1));
     }
 
     public static T ReachAt<T>(this IEnumerable<T> collection, int index)
@@ -2510,7 +2562,7 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<T> ReplaceWhere<T>(this IEnumerable<T>? enumerable, Predicate<T> predicate,
-            Func<T> replacement)
+        Func<T> replacement)
     {
         if (enumerable == null) yield break;
         foreach (var item in enumerable)
@@ -2536,23 +2588,24 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<TResult> RightJoin<TOuter, TInner, TKey, TResult>(
-            this IEnumerable<TOuter> outer,
-            IEnumerable<TInner> inner,
-            Func<TOuter, TKey> outerKeySelector,
-            Func<TInner, TKey> innerKeySelector,
-            Func<TOuter?, TInner, TResult> resultSelector)
+        this IEnumerable<TOuter> outer,
+        IEnumerable<TInner> inner,
+        Func<TOuter, TKey> outerKeySelector,
+        Func<TInner, TKey> innerKeySelector,
+        Func<TOuter?, TInner, TResult> resultSelector)
     {
         return inner.GroupJoin(
-            outer,
-            innerKeySelector,
-            outerKeySelector,
-            (innerElement, outerElements) => outerElements
-                .Select(outerElement => resultSelector(outerElement, innerElement))
-                .DefaultIfEmpty(resultSelector(default, innerElement)))
+                outer,
+                innerKeySelector,
+                outerKeySelector,
+                (innerElement, outerElements) => outerElements
+                    .Select(outerElement => resultSelector(outerElement, innerElement))
+                    .DefaultIfEmpty(resultSelector(default, innerElement)))
             .SelectMany(result => result);
     }
 
-    public static IEnumerable<(TKey key, int count)> RunLengthEncode<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    public static IEnumerable<(TKey key, int count)> RunLengthEncode<TSource, TKey>(this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector)
     {
         using var e = source.GetEnumerator();
         if (!e.MoveNext())
@@ -2598,7 +2651,9 @@ public static class EnumerableExtensions
         }
     }
 
-    public static IEnumerable<TResult> ScanBy<TSource, TKey, TAccumulate, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TAccumulate> seedSelector, Func<TKey, TAccumulate, TSource, TAccumulate> func, Func<TKey, TAccumulate, TResult> resultSelector)
+    public static IEnumerable<TResult> ScanBy<TSource, TKey, TAccumulate, TResult>(this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector, Func<TSource, TAccumulate> seedSelector,
+        Func<TKey, TAccumulate, TSource, TAccumulate> func, Func<TKey, TAccumulate, TResult> resultSelector)
     {
         var seedKey = default(TKey);
         var seed = default(TAccumulate);
@@ -2676,7 +2731,7 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<TResult> Select<TSource, TResult>(this IEnumerable<TSource> source,
-                                    Func<TSource, TResult> selector, bool allowNull = true)
+        Func<TSource, TResult> selector, bool allowNull = true)
     {
         foreach (var item in source)
         {
@@ -2686,7 +2741,8 @@ public static class EnumerableExtensions
         }
     }
 
-    public static IEnumerable<TResult> SelectIndexed<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, int, TResult> selector)
+    public static IEnumerable<TResult> SelectIndexed<TSource, TResult>(this IEnumerable<TSource> source,
+        Func<TSource, int, TResult> selector)
     {
         var index = 0;
         foreach (var element in source)
@@ -2701,8 +2757,8 @@ public static class EnumerableExtensions
         if (source == null)
             throw new ArgumentNullException(nameof(source));
         foreach (var enumeration in source)
-            foreach (var item in enumeration)
-                yield return item;
+        foreach (var item in enumeration)
+            yield return item;
     }
 
     public static IEnumerable<T> SelectMany<T>(this IEnumerable<T[]> source)
@@ -2710,8 +2766,8 @@ public static class EnumerableExtensions
         if (source == null)
             throw new ArgumentNullException(nameof(source));
         foreach (var enumeration in source)
-            foreach (var item in enumeration)
-                yield return item;
+        foreach (var item in enumeration)
+            yield return item;
     }
 
     public static IEnumerable<T> SelectManyRecursive<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>?> selector)
@@ -2790,7 +2846,8 @@ public static class EnumerableExtensions
         return true;
     }
 
-    public static bool SequenceEqualBy<TSource, TKey>(this IEnumerable<TSource> source, IEnumerable<TSource> other, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer = null)
+    public static bool SequenceEqualBy<TSource, TKey>(this IEnumerable<TSource> source, IEnumerable<TSource> other,
+        Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer = null)
     {
         comparer ??= EqualityComparer<TKey>.Default;
         return source.Select(keySelector).SequenceEqual(other.Select(keySelector), comparer);
@@ -2922,6 +2979,7 @@ public static class EnumerableExtensions
             {
                 yield = true;
             }
+
             if (yield)
             {
                 yield return item;
@@ -2936,9 +2994,9 @@ public static class EnumerableExtensions
         if (items == null)
             throw new ArgumentNullException(nameof(items));
         if (items is ICollection<T>)
-            count = ((ICollection<T>)items).Count;
+            count = ((ICollection<T>) items).Count;
         else if (items is ICollection)
-            count = ((ICollection)items).Count;
+            count = ((ICollection) items).Count;
         else
             count = items.Count();
         if (start < 0)
@@ -2967,7 +3025,8 @@ public static class EnumerableExtensions
         }
     }
 
-    public static IEnumerable<T> SortedMerge<T>(this IEnumerable<T> first, IEnumerable<T> second, IComparer<T>? comparer = null)
+    public static IEnumerable<T> SortedMerge<T>(this IEnumerable<T> first, IEnumerable<T> second,
+        IComparer<T>? comparer = null)
     {
         using var firstEnumerator = first.GetEnumerator();
         using var secondEnumerator = second.GetEnumerator();
@@ -3055,6 +3114,7 @@ public static class EnumerableExtensions
                 return false;
             }
         }
+
         return true;
     }
 
@@ -3251,11 +3311,12 @@ public static class EnumerableExtensions
 
     public static IOrderedEnumerable<T> ThenBy<T>(this IEnumerable<T> source, Comparison<T> comparison)
     {
-        return (source as IOrderedEnumerable<T>)?.ThenBy(x => x, Comparer<T>.Create(comparison)) ?? source.OrderBy(x => x, Comparer<T>.Create(comparison));
+        return (source as IOrderedEnumerable<T>)?.ThenBy(x => x, Comparer<T>.Create(comparison)) ??
+               source.OrderBy(x => x, Comparer<T>.Create(comparison));
     }
 
     public static TResult[] ToArray<TSource, TResult>(this IEnumerable<TSource> source,
-            Func<TSource, TResult> selector)
+        Func<TSource, TResult> selector)
     {
         return source.Select(selector).ToArray();
     }
@@ -3267,6 +3328,7 @@ public static class EnumerableExtensions
         {
             arr[indexSelector(item)] = item;
         }
+
         return arr;
     }
 
@@ -3328,7 +3390,7 @@ public static class EnumerableExtensions
     }
 
     public static Dictionary<TKey, List<TValue>> ToDictionary<TKey, TValue>(
-            this IEnumerable<IGrouping<TKey, TValue>> groupings) where TKey : notnull
+        this IEnumerable<IGrouping<TKey, TValue>> groupings) where TKey : notnull
     {
         if (groupings == null)
             throw new ArgumentNullException(nameof(groupings));
@@ -3345,7 +3407,9 @@ public static class EnumerableExtensions
         return enumeration.ToDictionary(item => item.Key, item => item.Value);
     }
 
-    public static Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer, bool overwriteOnDuplicate)
+    public static Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement>(this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer,
+        bool overwriteOnDuplicate)
         where TKey : notnull
     {
         var dictionary = new Dictionary<TKey, TElement>(comparer);
@@ -3358,10 +3422,13 @@ public static class EnumerableExtensions
                 dictionary[key] = value;
             }
         }
+
         return dictionary;
     }
 
-    public static Dictionary<TKey, TElement> ToDictionarySafe<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey>? comparer = null)
+    public static Dictionary<TKey, TElement> ToDictionarySafe<TSource, TKey, TElement>(this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector,
+        IEqualityComparer<TKey>? comparer = null)
         where TKey : notnull
     {
         var dictionary = new Dictionary<TKey, TElement>(comparer);
@@ -3373,11 +3440,12 @@ public static class EnumerableExtensions
                 dictionary[key] = elementSelector(element);
             }
         }
+
         return dictionary;
     }
 
     public static IDictionary<TKey, TElement> ToDistinctDictionary<TSource, TKey, TElement>(
-                this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
+        this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
         where TKey : notnull
     {
         if (source == null) throw new NullReferenceException("The 'source' cannot be null.");
@@ -3403,12 +3471,14 @@ public static class EnumerableExtensions
     }
 
     public static List<TResult> ToList<TSource, TResult>(this IEnumerable<TSource> source,
-            Func<TSource, TResult> selector)
+        Func<TSource, TResult> selector)
     {
         return source.Select(selector).ToList();
     }
 
-    public static ILookup<TKey, TElement> ToLookup<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer, bool excludeNulls)
+    public static ILookup<TKey, TElement> ToLookup<TSource, TKey, TElement>(this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer,
+        bool excludeNulls)
     {
         return excludeNulls
             ? source.Where(x => keySelector(x) != null).ToLookup(keySelector, elementSelector, comparer)
@@ -3495,7 +3565,8 @@ public static class EnumerableExtensions
         }
     }
 
-    public static IEnumerable<T> TraverseBreadthFirst<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> childSelector)
+    public static IEnumerable<T> TraverseBreadthFirst<T>(this IEnumerable<T> source,
+        Func<T, IEnumerable<T>> childSelector)
     {
         var queue = new Queue<T>(source);
         while (queue.Count > 0)
@@ -3509,7 +3580,8 @@ public static class EnumerableExtensions
         }
     }
 
-    public static IEnumerable<T> TraverseDepthFirst<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> childSelector)
+    public static IEnumerable<T> TraverseDepthFirst<T>(this IEnumerable<T> source,
+        Func<T, IEnumerable<T>> childSelector)
     {
         var stack = new Stack<T>(source);
         while (stack.Count > 0)
@@ -3561,11 +3633,13 @@ public static class EnumerableExtensions
             value = default;
             return false;
         }
+
         value = enumerator.Current;
         return !enumerator.MoveNext();
     }
 
-    public static IEnumerable<TResult> Unfold<TState, TResult>(TState seed, Func<TState, (TResult result, TState next)> generator)
+    public static IEnumerable<TResult> Unfold<TState, TResult>(TState seed,
+        Func<TState, (TResult result, TState next)> generator)
     {
         var state = seed;
         while (true)
@@ -3620,7 +3694,7 @@ public static class EnumerableExtensions
     {
         if (source == null) throw new ArgumentNullException(nameof(source));
 
-        return (IEnumerable<T>)source.Where(x => x != null);
+        return (IEnumerable<T>) source.Where(x => x != null);
     }
 
     public static IEnumerable<IEnumerable<T>> Window<T>(this IEnumerable<T> source, int size)
@@ -3632,6 +3706,7 @@ public static class EnumerableExtensions
             {
                 queue.Dequeue();
             }
+
             queue.Enqueue(item);
             if (queue.Count == size)
             {
@@ -3649,6 +3724,7 @@ public static class EnumerableExtensions
             {
                 queue.Dequeue();
             }
+
             yield return (queue.ToList(), item);
             queue.Enqueue(item);
         }
@@ -3684,7 +3760,7 @@ public static class EnumerableExtensions
 
     public static IEnumerable<TSource> Without<TSource>(this IEnumerable<TSource> source, params TSource[] elements)
     {
-        return Without(source, (IEnumerable<TSource>)elements);
+        return Without(source, (IEnumerable<TSource>) elements);
     }
 
     public static IEnumerable<TSource> Without<TSource>(this IEnumerable<TSource> source,
@@ -3696,7 +3772,7 @@ public static class EnumerableExtensions
     public static IEnumerable<TSource> Without<TSource>(this IEnumerable<TSource> source,
         IEqualityComparer<TSource> equalityComparer, params TSource[] elements)
     {
-        return Without(source, equalityComparer, (IEnumerable<TSource>)elements);
+        return Without(source, equalityComparer, (IEnumerable<TSource>) elements);
     }
 
     public static IEnumerable<TSource> Without<TSource>(this IEnumerable<TSource> source,
@@ -3727,7 +3803,9 @@ public static class EnumerableExtensions
             throw new InvalidOperationException("Collections should have the same size");
     }
 
-    public static IEnumerable<TResult> ZipLongest<TFirst, TSecond, TResult>(this IEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst?, TSecond?, TResult> resultSelector, TFirst? defaultFirst = default, TSecond? defaultSecond = default)
+    public static IEnumerable<TResult> ZipLongest<TFirst, TSecond, TResult>(this IEnumerable<TFirst> first,
+        IEnumerable<TSecond> second, Func<TFirst?, TSecond?, TResult> resultSelector, TFirst? defaultFirst = default,
+        TSecond? defaultSecond = default)
     {
         using var iterFirst = first.GetEnumerator();
         using var iterSecond = second.GetEnumerator();
@@ -3739,7 +3817,8 @@ public static class EnumerableExtensions
         }
     }
 
-    public static IEnumerable<TResult> ZipShortest<TFirst, TSecond, TResult>(this IEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector)
+    public static IEnumerable<TResult> ZipShortest<TFirst, TSecond, TResult>(this IEnumerable<TFirst> first,
+        IEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector)
     {
         using var iterFirst = first.GetEnumerator();
         using var iterSecond = second.GetEnumerator();
@@ -3750,10 +3829,10 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<TResult> ZipThree<T1, T2, T3, TResult>(
-    this IEnumerable<T1> source,
-    IEnumerable<T2> second,
-    IEnumerable<T3> third,
-    Func<T1, T2, T3, TResult> resultSelector)
+        this IEnumerable<T1> source,
+        IEnumerable<T2> second,
+        IEnumerable<T3> third,
+        Func<T1, T2, T3, TResult> resultSelector)
     {
         using var e1 = source.GetEnumerator();
         using var e2 = second.GetEnumerator();
@@ -3847,7 +3926,7 @@ public static class EnumerableExtensions
 
     private static double StdDevLogic(this IEnumerable<int> source, int buffer = 1)
     {
-        return StdDevLogic(source.Select(x => (double)x), buffer);
+        return StdDevLogic(source.Select(x => (double) x), buffer);
     }
 
     private static float StdDevLogic(this IEnumerable<float> source, int buffer = 1)
@@ -3856,7 +3935,7 @@ public static class EnumerableExtensions
         var data = source.ToList();
         var average = data.Average();
         var differences = data.Select(u => Math.Pow(average - u, 2.0)).ToList();
-        return (float)Math.Sqrt(differences.Sum() / (differences.Count - buffer));
+        return (float) Math.Sqrt(differences.Sum() / (differences.Count - buffer));
     }
 
     private static IEnumerable<TSource> WithoutIterator<TSource>(IEnumerable<TSource> source,
@@ -3913,6 +3992,7 @@ public static class EnumerableExtensions
                     if (!_source.MoveNext()) yield break;
                     _cache.Add(_source.Current);
                 }
+
                 yield return _cache[i++];
             }
         }
