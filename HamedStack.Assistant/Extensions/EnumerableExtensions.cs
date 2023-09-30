@@ -89,7 +89,17 @@ public static class EnumerableExtensions
 
         return Aggregate(enumeration.Select(toString), separator);
     }
+    public static T? Get<T>(this IEnumerable<T> source, int index)
+    {
+        if (source == null)
+            throw new ArgumentNullException(nameof(source));
 
+        if (index < 0)
+            throw new ArgumentOutOfRangeException(nameof(index), "Index must be non-negative.");
+
+        // Use elementAtOrDefault to handle the case where the index is greater than or equal to the length
+        return source.ElementAtOrDefault(index);
+    }
     public static string Aggregate(this IEnumerable<string> enumeration, string separator)
     {
         if (enumeration == null)
@@ -101,7 +111,12 @@ public static class EnumerableExtensions
             return returnValue[separator.Length..];
         return returnValue;
     }
-
+    public static bool EnumerableEquals<T>(this IEnumerable<T>? enumeration1, IEnumerable<T>? enumeration2)
+    {
+        if (ReferenceEquals(enumeration1, enumeration2)) return true;
+        if (enumeration1 is null || enumeration2 is null) return false;
+        return enumeration1.SequenceEqual(enumeration2, EqualityComparer<T>.Default);
+    }
     public static TSource AggregateRight<TSource>(this IEnumerable<TSource> source,
         Func<TSource, TSource, TSource> func)
     {
