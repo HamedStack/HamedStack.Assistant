@@ -8,6 +8,7 @@
         <Company/>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <Version>1.0.1</Version>
+        <Description>A huge collection of useful extension methods, utilities and types for the .NET ecosystem.</Description>
         <LangVersion>latest</LangVersion>
         <PackageProjectUrl>https://github.com/HamedStack/HamedStack.Assistant</PackageProjectUrl>
         <RepositoryUrl>https://github.com/HamedStack/HamedStack.Assistant</RepositoryUrl>
