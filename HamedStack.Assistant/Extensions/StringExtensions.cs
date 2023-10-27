@@ -49,7 +49,62 @@ public static class StringExtensions
         if (@this.IsNull()) throw new ArgumentNullException(nameof(@this), $"{nameof(@this)} file path is null");
         return new FileStream(@this, fileMode, fileAccess, fileShare, bufferSize);
     }
+    public static bool HasPrefix(this string str, string prefix)
+    {
+        if (str is null)
+        {
+            throw new ArgumentNullException(nameof(str));
+        }
 
+        if (prefix is null)
+        {
+            throw new ArgumentNullException(nameof(prefix));
+        }
+
+        if (str.Length < prefix.Length)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < prefix.Length; i++)
+        {
+            if (str[i] != prefix[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static bool HasSuffix(this string str, string suffix)
+    {
+        if (str is null)
+        {
+            throw new ArgumentNullException(nameof(str));
+        }
+
+        if (suffix is null)
+        {
+            throw new ArgumentNullException(nameof(suffix));
+        }
+
+        if (str.Length < suffix.Length)
+        {
+            return false;
+        }
+
+        int offset = str.Length - suffix.Length;
+        for (int i = 0; i < suffix.Length; i++)
+        {
+            if (str[offset + i] != suffix[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
     public static IEnumerable<string> Chunk(this string str, int maxLength, bool breakWord)
     {
         if (string.IsNullOrEmpty(str)) throw new ArgumentException("The string cannot be null or empty.");

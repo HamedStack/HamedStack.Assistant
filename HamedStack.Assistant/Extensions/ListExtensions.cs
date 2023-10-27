@@ -3,6 +3,7 @@
 // ReSharper disable UnusedMember.Global
 
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -21,7 +22,7 @@ public static class ListExtensions
         if (items == null) throw new ArgumentNullException(nameof(items));
         foreach (var item in items) list.Add(item);
     }
-
+    public static ReadOnlyCollection<T> AsReadOnly<T>(this IList<T> list) => new(list);
     public static void AddRangeUnique<T>(this IList<T> list, T[] items) where T : class
     {
         foreach (var item in items)
