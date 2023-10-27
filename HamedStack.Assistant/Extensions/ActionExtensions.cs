@@ -4,11 +4,17 @@
 
 using System.Diagnostics;
 using System.Linq.Expressions;
+using HamedStack.Assistant.Extensions.TaskExtended;
 
 namespace HamedStack.Assistant.Extensions.ActionExtended;
 
 public static class ActionExtensions
 {
+    public static void ExecuteTimeout(this Action action, TimeSpan maxDelay)
+    {
+        var executionTask = Task.Run(action);
+        executionTask.ExecuteTimeout( maxDelay);
+    }
     public static TimeSpan GetExecutionTime(this Action action)
     {
         if (action == null) throw new ArgumentNullException(nameof(action));

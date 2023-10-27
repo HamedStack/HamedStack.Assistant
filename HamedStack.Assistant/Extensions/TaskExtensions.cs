@@ -11,6 +11,15 @@ namespace HamedStack.Assistant.Extensions.TaskExtended;
 
 public static partial class TaskExtensions
 {
+    public static void ExecuteTimeout(this Task task, TimeSpan maxDelay)
+    {
+        var delayTask = Task.Delay(maxDelay);
+        var finishedTaskIndex = Task.WaitAny(task, delayTask);
+        if (finishedTaskIndex != 0)
+        {
+            throw new TimeoutException("Task did not finish in the desired time slot.");
+        }
+    }
     public static async Task<IEnumerable<TSource>> AsEnumerable<TSource>(
         this Task<IEnumerable<TSource>> source)
     {
