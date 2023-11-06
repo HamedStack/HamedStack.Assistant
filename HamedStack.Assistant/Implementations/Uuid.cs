@@ -4,16 +4,18 @@
 namespace HamedStack.Assistant.Implementations;
 
 /// <summary>
-/// Represents a universally unique identifier (UUID) with conversions to and from the built-in <see cref="Guid"/> type.
+/// Represents a universally unique identifier (UUID) with conversions to and from the built-in <see
+/// cref="Guid"/> type.
 /// </summary>
 /// <remarks>
-/// This UUID struct provides a custom representation of the universal unique identifier,
-/// allowing additional customization or performance improvements over the built-in Guid.
+/// This UUID struct provides a custom representation of the universal unique identifier, allowing
+/// additional customization or performance improvements over the built-in Guid.
 /// </remarks>
 public readonly struct Uuid : IEquatable<Uuid>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="Uuid"/> struct using the specified most and least significant bits.
+    /// Initializes a new instance of the <see cref="Uuid"/> struct using the specified most and
+    /// least significant bits.
     /// </summary>
     /// <param name="mostSignificantBits">The most significant bits of the UUID.</param>
     /// <param name="leastSignificantBits">The least significant bits of the UUID.</param>
@@ -28,7 +30,9 @@ public readonly struct Uuid : IEquatable<Uuid>
     /// </summary>
     /// <param name="b">The byte array representing the UUID. It must have a length of 16.</param>
     /// <exception cref="ArgumentNullException">Thrown when the provided byte array is null.</exception>
-    /// <exception cref="ArgumentException">Thrown when the length of the byte array is not 16.</exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the length of the byte array is not 16.
+    /// </exception>
     public Uuid(byte[] b)
     {
         if (b == null)

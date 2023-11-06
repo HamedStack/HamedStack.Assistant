@@ -5,6 +5,10 @@
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
 
+using HamedStack.Assistant.Enums;
+using HamedStack.Assistant.Extensions.CharExtended;
+using HamedStack.Assistant.Implementations;
+using HamedStack.Assistant.Implementations.Internals;
 using System.Collections.Specialized;
 using System.Data;
 using System.Globalization;
@@ -18,11 +22,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
-using HamedStack.Assistant.Enums;
-using HamedStack.Assistant.Extensions.CharExtended;
-using HamedStack.Assistant.Implementations;
-using HamedStack.Assistant.Implementations.Internals;
-
 
 namespace HamedStack.Assistant.Extensions.StringExtended;
 
@@ -49,62 +48,7 @@ public static class StringExtensions
         if (@this.IsNull()) throw new ArgumentNullException(nameof(@this), $"{nameof(@this)} file path is null");
         return new FileStream(@this, fileMode, fileAccess, fileShare, bufferSize);
     }
-    public static bool HasPrefix(this string str, string prefix)
-    {
-        if (str is null)
-        {
-            throw new ArgumentNullException(nameof(str));
-        }
 
-        if (prefix is null)
-        {
-            throw new ArgumentNullException(nameof(prefix));
-        }
-
-        if (str.Length < prefix.Length)
-        {
-            return false;
-        }
-
-        for (int i = 0; i < prefix.Length; i++)
-        {
-            if (str[i] != prefix[i])
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static bool HasSuffix(this string str, string suffix)
-    {
-        if (str is null)
-        {
-            throw new ArgumentNullException(nameof(str));
-        }
-
-        if (suffix is null)
-        {
-            throw new ArgumentNullException(nameof(suffix));
-        }
-
-        if (str.Length < suffix.Length)
-        {
-            return false;
-        }
-
-        int offset = str.Length - suffix.Length;
-        for (int i = 0; i < suffix.Length; i++)
-        {
-            if (str[offset + i] != suffix[i])
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
     public static IEnumerable<string> Chunk(this string str, int maxLength, bool breakWord)
     {
         if (string.IsNullOrEmpty(str)) throw new ArgumentException("The string cannot be null or empty.");
@@ -153,10 +97,16 @@ public static class StringExtensions
     /// </summary>
     /// <param name="str">The source string to be chunked.</param>
     /// <param name="maxLength">The maximum length for each chunk.</param>
-    /// <param name="overlap">The number of overlapping characters between each adjacent pair of chunks.</param>
+    /// <param name="overlap">
+    /// The number of overlapping characters between each adjacent pair of chunks.
+    /// </param>
     /// <exception cref="ArgumentException">Thrown when the input string is null or empty.</exception>
-    /// <exception cref="ArgumentException">Thrown when the maxLength parameter is less than or equal to zero.</exception>
-    /// <exception cref="ArgumentException">Thrown when the overlap parameter is negative or greater than or equal to maxLength.</exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the maxLength parameter is less than or equal to zero.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the overlap parameter is negative or greater than or equal to maxLength.
+    /// </exception>
     /// <returns>An IEnumerable of string chunks.</returns>
     public static IEnumerable<string> ChunkBy(this string str, int maxLength, int overlap)
     {
@@ -183,7 +133,9 @@ public static class StringExtensions
     /// <param name="str">The source string to be chunked.</param>
     /// <param name="maxLength">The maximum length for each chunk.</param>
     /// <exception cref="ArgumentException">Thrown when the input string is null or empty.</exception>
-    /// <exception cref="ArgumentException">Thrown when the maxLength parameter is less than or equal to zero.</exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the maxLength parameter is less than or equal to zero.
+    /// </exception>
     /// <returns>An IEnumerable of string chunks.</returns>
     public static IEnumerable<string> ChunkBy(this string str, int maxLength)
     {
@@ -204,12 +156,15 @@ public static class StringExtensions
     }
 
     /// <summary>
-    /// Splits the string into chunks based on the given maximum length, ensuring that words are not broken in the middle.
+    /// Splits the string into chunks based on the given maximum length, ensuring that words are not
+    /// broken in the middle.
     /// </summary>
     /// <param name="str">The source string to be chunked.</param>
     /// <param name="maxLength">The maximum length for each chunk.</param>
     /// <exception cref="ArgumentException">Thrown when the input string is null or empty.</exception>
-    /// <exception cref="ArgumentException">Thrown when the maxLength parameter is less than or equal to zero.</exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the maxLength parameter is less than or equal to zero.
+    /// </exception>
     /// <returns>An IEnumerable of string chunks.</returns>
     public static IEnumerable<string> ChunkByWords(this string str, int maxLength)
     {
@@ -785,6 +740,34 @@ public static class StringExtensions
         return str.Length % 2 != 0;
     }
 
+    public static bool HasPrefix(this string str, string prefix)
+    {
+        if (str is null)
+        {
+            throw new ArgumentNullException(nameof(str));
+        }
+
+        if (prefix is null)
+        {
+            throw new ArgumentNullException(nameof(prefix));
+        }
+
+        if (str.Length < prefix.Length)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < prefix.Length; i++)
+        {
+            if (str[i] != prefix[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static bool HasRepeatedChars(this string str)
     {
         return str.Distinct().Count() == 1;
@@ -794,6 +777,35 @@ public static class StringExtensions
     {
         if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count));
         return str.Count(c => c == ' ') == count;
+    }
+
+    public static bool HasSuffix(this string str, string suffix)
+    {
+        if (str is null)
+        {
+            throw new ArgumentNullException(nameof(str));
+        }
+
+        if (suffix is null)
+        {
+            throw new ArgumentNullException(nameof(suffix));
+        }
+
+        if (str.Length < suffix.Length)
+        {
+            return false;
+        }
+
+        int offset = str.Length - suffix.Length;
+        for (int i = 0; i < suffix.Length; i++)
+        {
+            if (str[offset + i] != suffix[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static byte[] HexStringToByteArray(this string hexString)
@@ -1234,6 +1246,7 @@ public static class StringExtensions
         }
         return false;
     }
+
     public static bool IsValidEmail(this string email)
     {
         var trimmedEmail = email.Trim();
@@ -1508,7 +1521,7 @@ public static class StringExtensions
 
         return pathParts.Count > 0 ? Path.Combine(pathParts.ToArray()) : string.Empty;
     }
-    
+
     public static bool QuickContains(this string text, string word, bool ignorecase = false)
     {
         var trie = new Trie();

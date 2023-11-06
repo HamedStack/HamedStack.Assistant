@@ -1,5 +1,4 @@
-﻿
-// ReSharper disable UnusedType.Global
+﻿// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
 namespace HamedStack.Assistant.Implementations;
@@ -22,7 +21,9 @@ public class AsyncLazy<T> : Lazy<Task<T>>
     /// <summary>
     /// Initializes a new instance of the <see cref="AsyncLazy{T}"/> class.
     /// </summary>
-    /// <param name="taskFactory">The asynchronous delegate that produces the lazily initialized value.</param>
+    /// <param name="taskFactory">
+    /// The asynchronous delegate that produces the lazily initialized value.
+    /// </param>
     public AsyncLazy(Func<Task<T>> taskFactory) :
         base(() => Task.Factory.StartNew(taskFactory).Unwrap())
     {

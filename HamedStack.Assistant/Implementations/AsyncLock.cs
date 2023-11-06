@@ -1,5 +1,4 @@
-﻿
-// ReSharper disable UnusedType.Global
+﻿// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
 namespace HamedStack.Assistant.Implementations;
@@ -23,7 +22,9 @@ public class AsyncLock : IDisposable
     /// <summary>
     /// Asynchronously acquires an exclusive lock.
     /// </summary>
-    /// <returns>A task that represents the asynchronous lock acquisition, with a result of the acquired <see cref="AsyncLock"/>.</returns>
+    /// <returns>
+    /// A task that represents the asynchronous lock acquisition, with a result of the acquired <see cref="AsyncLock"/>.
+    /// </returns>
     public async Task<AsyncLock> LockAsync()
     {
         await _semaphoreSlim.WaitAsync().ConfigureAwait(false);

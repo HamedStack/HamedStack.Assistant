@@ -2,9 +2,9 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 
+using HamedStack.Assistant.Extensions.TypeExtended;
 using System.Linq.Expressions;
 using System.Reflection;
-using HamedStack.Assistant.Extensions.TypeExtended;
 
 namespace HamedStack.Assistant.Extensions.ExpressionExtended;
 
@@ -128,7 +128,6 @@ public static class ExpressionExtensions
         throw new NotSupportedException(expr.NodeType + " is not supported.");
     }
 
-   
     public static List<Expression> Flatten(this Expression expression)
     {
         var result = new List<Expression>();
@@ -394,7 +393,6 @@ public static class ExpressionExtensions
             expr1.Parameters);
     }
 
-  
     public static TResult Invoke<TResult>(this Expression<Func<TResult>> expression) => expression.Compile()();
 
     public static TResult Invoke<T, TResult>(this Expression<Func<T, TResult>> expression, T t)
@@ -634,8 +632,6 @@ public static class ExpressionExtensions
     {
         return expression.NodeType is ExpressionType.Not;
     }
-
-    
 
     public static Expression<TFunc> Not<TFunc>(this Expression<TFunc> expression)
     {

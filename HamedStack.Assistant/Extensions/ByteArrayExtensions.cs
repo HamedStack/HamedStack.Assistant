@@ -1,11 +1,11 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
 
+using HamedStack.Assistant.Enums;
+using HamedStack.Assistant.Extensions.StreamExtended;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using HamedStack.Assistant.Enums;
-using HamedStack.Assistant.Extensions.StreamExtended;
 
 #pragma warning disable SYSLIB0001
 

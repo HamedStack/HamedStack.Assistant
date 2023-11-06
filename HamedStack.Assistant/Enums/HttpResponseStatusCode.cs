@@ -11,7 +11,8 @@ namespace HamedStack.Assistant.Enums;
 public enum HttpResponseStatusCode
 {
     /// <summary>
-    /// The server has received the request headers and the client should proceed to send the request body.
+    /// The server has received the request headers and the client should proceed to send the
+    /// request body.
     /// </summary>
     Continue = 100,
 
@@ -21,12 +22,14 @@ public enum HttpResponseStatusCode
     SwitchingProtocols = 101,
 
     /// <summary>
-    /// A WebDAV request may contain many sub-requests involving file operations, requiring a long time to complete the request.
+    /// A WebDAV request may contain many sub-requests involving file operations, requiring a long
+    /// time to complete the request.
     /// </summary>
     ProcessingWebDAV = 102,
 
     /// <summary>
-    /// This status code is primarily intended to be used with the Link header to allow the user agent to start preloading resources while the server is still preparing a response.
+    /// This status code is primarily intended to be used with the Link header to allow the user
+    /// agent to start preloading resources while the server is still preparing a response.
     /// </summary>
     EarlyHints = 103,
 
@@ -71,12 +74,14 @@ public enum HttpResponseStatusCode
     MultiStatusWebDAV = 207,
 
     /// <summary>
-    /// The message body that follows is an XML message and can contain a number of separate response codes, depending on how many sub-requests were made.
+    /// The message body that follows is an XML message and can contain a number of separate
+    /// response codes, depending on how many sub-requests were made.
     /// </summary>
     AlreadyReportedWebDAV = 208,
 
     /// <summary>
-    /// The server has fulfilled a request for the resource, and the response is a representation of the result of one or more instance-manipulations applied to the current instance.
+    /// The server has fulfilled a request for the resource, and the response is a representation of
+    /// the result of one or more instance-manipulations applied to the current instance.
     /// </summary>
     IMUsed = 226,
 
@@ -116,7 +121,8 @@ public enum HttpResponseStatusCode
     TemporaryRedirect = 307,
 
     /// <summary>
-    /// The target resource has been assigned a new permanent URI and any future references to this resource should be done using one of the enclosed URIs.
+    /// The target resource has been assigned a new permanent URI and any future references to this
+    /// resource should be done using one of the enclosed URIs.
     /// </summary>
     PermanentRedirect = 308,
 
@@ -146,17 +152,20 @@ public enum HttpResponseStatusCode
     NotFound = 404,
 
     /// <summary>
-    /// The method specified in the request is not allowed for the resource identified by the request URI.
+    /// The method specified in the request is not allowed for the resource identified by the
+    /// request URI.
     /// </summary>
     MethodNotAllowed = 405,
 
     /// <summary>
-    /// The client has indicated with Accept headers that it will not accept any media type that the server can produce.
+    /// The client has indicated with Accept headers that it will not accept any media type that the
+    /// server can produce.
     /// </summary>
     NotAcceptable = 406,
 
     /// <summary>
-    /// Similar to 401 (Unauthorized), but indicates that the client needs to authenticate to the proxy before the requested resource can be returned.
+    /// Similar to 401 (Unauthorized), but indicates that the client needs to authenticate to the
+    /// proxy before the requested resource can be returned.
     /// </summary>
     ProxyAuthenticationRequired = 407,
 
@@ -181,7 +190,8 @@ public enum HttpResponseStatusCode
     LengthRequired = 411,
 
     /// <summary>
-    /// The precondition given in one or more of the request-header fields evaluated to false when it was tested on the server.
+    /// The precondition given in one or more of the request-header fields evaluated to false when
+    /// it was tested on the server.
     /// </summary>
     PreconditionFailed = 412,
 
@@ -191,22 +201,26 @@ public enum HttpResponseStatusCode
     PayloadTooLarge = 413,
 
     /// <summary>
-    /// The server is refusing to service the request because the request-target is longer than the server is willing to interpret.
+    /// The server is refusing to service the request because the request-target is longer than the
+    /// server is willing to interpret.
     /// </summary>
     URITooLong = 414,
 
     /// <summary>
-    /// The server is refusing to service the request because the entity of the request is in a format not supported by the requested resource for the requested method.
+    /// The server is refusing to service the request because the entity of the request is in a
+    /// format not supported by the requested resource for the requested method.
     /// </summary>
     UnsupportedMediaType = 415,
 
     /// <summary>
-    /// The client has asked for a portion of the file (byte serving), but the server cannot supply that portion.
+    /// The client has asked for a portion of the file (byte serving), but the server cannot supply
+    /// that portion.
     /// </summary>
     RangeNotSatisfiable = 416,
 
     /// <summary>
-    /// The expectation given in the request's Expect header field could not be met by at least one of the inbound servers.
+    /// The expectation given in the request's Expect header field could not be met by at least one
+    /// of the inbound servers.
     /// </summary>
     ExpectationFailed = 417,
 
@@ -216,7 +230,8 @@ public enum HttpResponseStatusCode
     ImATeapot = 418,
 
     /// <summary>
-    /// The request was directed at a server that is not able to produce a response (for example because a connection reuse).
+    /// The request was directed at a server that is not able to produce a response (for example
+    /// because a connection reuse).
     /// </summary>
     MisdirectedRequest = 421,
 
@@ -231,7 +246,8 @@ public enum HttpResponseStatusCode
     LockedWebDAV = 423,
 
     /// <summary>
-    /// The method could not be performed on the resource because the requested action depended on another action and that action failed.
+    /// The method could not be performed on the resource because the requested action depended on
+    /// another action and that action failed.
     /// </summary>
     FailedDependencyWebDAV = 424,
 
@@ -256,37 +272,44 @@ public enum HttpResponseStatusCode
     TooManyRequests = 429,
 
     /// <summary>
-    /// Indicates that the server is unwilling to process the request because its header fields are too large.
+    /// Indicates that the server is unwilling to process the request because its header fields are
+    /// too large.
     /// </summary>
     RequestHeaderFieldsTooLarge = 431,
 
     /// <summary>
-    /// A server operator has received a legal demand to deny access to a resource or to a set of resources that includes the requested resource.
+    /// A server operator has received a legal demand to deny access to a resource or to a set of
+    /// resources that includes the requested resource.
     /// </summary>
     UnavailableForLegalReasons = 451,
 
     /// <summary>
-    /// A generic error message, given when an unexpected condition was encountered and no more specific message is suitable.
+    /// A generic error message, given when an unexpected condition was encountered and no more
+    /// specific message is suitable.
     /// </summary>
     InternalServerError = 500,
 
     /// <summary>
-    /// The server does not support, or refuses to support, the major version of HTTP that was used in the request.
+    /// The server does not support, or refuses to support, the major version of HTTP that was used
+    /// in the request.
     /// </summary>
     NotImplemented = 501,
 
     /// <summary>
-    /// The server, while acting as a gateway or proxy, received an invalid response from the upstream server it accessed in attempting to fulfill the request.
+    /// The server, while acting as a gateway or proxy, received an invalid response from the
+    /// upstream server it accessed in attempting to fulfill the request.
     /// </summary>
     BadGateway = 502,
 
     /// <summary>
-    /// The server is currently unable to handle the request due to temporary overloading or maintenance of the server.
+    /// The server is currently unable to handle the request due to temporary overloading or
+    /// maintenance of the server.
     /// </summary>
     ServiceUnavailable = 503,
 
     /// <summary>
-    /// The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server or some other auxiliary server it needed to access in order to complete the request.
+    /// The server, while acting as a gateway or proxy, did not receive a timely response from the
+    /// upstream server or some other auxiliary server it needed to access in order to complete the request.
     /// </summary>
     GatewayTimeout = 504,
 

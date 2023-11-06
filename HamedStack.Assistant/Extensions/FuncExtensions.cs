@@ -2,8 +2,8 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedType.Global
 
-using System.Linq.Expressions;
 using HamedStack.Assistant.Extensions.TaskExtended;
+using System.Linq.Expressions;
 
 namespace HamedStack.Assistant.Extensions.FuncExtended;
 
@@ -17,6 +17,7 @@ public static class FuncExtensions
         });
         executionTask.ExecuteTimeout(maxDelay);
     }
+
     public static Func<T2, T1, TR> Swap<T1, T2, TR>(this Func<T1, T2, TR> f)
     {
         return (t2, t1) => f(t1, t2);

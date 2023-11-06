@@ -7,20 +7,6 @@ using System.Collections.Concurrent;
 namespace HamedStack.Assistant.Utilities;
 
 /// <summary>
-/// Interface for synchronous pipes.
-/// </summary>
-/// <typeparam name="T">Type of input and output data.</typeparam>
-public interface IPipeFilter<T>
-{
-    /// <summary>
-    /// Processes the input data and returns the processed data.
-    /// </summary>
-    /// <param name="input">The input data.</param>
-    /// <returns>The processed data.</returns>
-    T Process(T input);
-}
-
-/// <summary>
 /// Interface for asynchronous pipes.
 /// </summary>
 /// <typeparam name="T">Type of input and output data.</typeparam>
@@ -35,59 +21,80 @@ public interface IAsyncPipeFilter<T>
 }
 
 /// <summary>
+/// Interface for synchronous pipes.
+/// </summary>
+/// <typeparam name="T">Type of input and output data.</typeparam>
+public interface IPipeFilter<T>
+{
+    /// <summary>
+    /// Processes the input data and returns the processed data.
+    /// </summary>
+    /// <param name="input">The input data.</param>
+    /// <returns>The processed data.</returns>
+    T Process(T input);
+}
+
+/// <summary>
 /// Fluent Pipeline implementation that supports both synchronous and asynchronous pipes.
 /// </summary>
 /// <typeparam name="T">Type of input and output data.</typeparam>
 public class FluentPipeline<T>
 {
-    private readonly List<Func<T, Task<T>>> _pipes = new();
     private readonly ConcurrentBag<Func<T, Task<T>>> _parallelPipes = new();
-    private Func<T, Task<T>>? _preProcess;
-    private Func<T, Task<T>>? _postProcess;
+    private readonly List<Func<T, Task<T>>> _pipes = new();
     private Action<Exception>? _onError;
+    private Func<T, Task<T>>? _postProcess;
+    private Func<T, Task<T>>? _preProcess;
 
     /// <summary>
-    /// Registers a sequential synchronous pipe with an optional condition.
+    /// Executes the pipeline asynchronously.
     /// </summary>
-    /// <param name="pipe">Synchronous pipe to register.</param>
-    /// <param name="condition">Optional condition for executing the pipe.</param>
-    /// <param name="errorHandler">Optional error handler.</param>
-    /// <returns>Updated FluentPipeline object for method chaining.</returns>
-    public FluentPipeline<T> RegisterSequential(IPipeFilter<T> pipe, Func<T, bool>? condition = null,
-        Action<Exception>? errorHandler = null)
+    /// <param name="input">Initial input data.</param>
+    /// <returns>Task representing the final processed data.</returns>
+    public async Task<T> ExecuteAsync(T input)
     {
-        return RegisterSequentialAsync(async input => await Task.FromResult(pipe.Process(input)), condition,
-            errorHandler);
+        try
+        {
+            // PreProcess
+            if (_preProcess != null)
+            {
+                input = await _preProcess(input);
+            }
+
+            // Sequential execution
+            foreach (var pipe in _pipes)
+            {
+                input = await pipe(input);
+            }
+
+            // Parallel execution
+            var parallelTasks = _parallelPipes.Select(pipe => pipe(input)).ToArray();
+            await Task.WhenAll(parallelTasks);
+
+            // PostProcess
+            if (_postProcess != null)
+            {
+                input = await _postProcess(input);
+            }
+
+            return input;
+        }
+        catch (Exception ex)
+        {
+            // Global error handling
+            _onError?.Invoke(ex);
+            throw;
+        }
     }
 
     /// <summary>
-    /// Registers an asynchronous pipe with an optional condition.
+    /// Sets a global OnError function that acts upon an unhandled exception during execution.
     /// </summary>
-    /// <param name="pipe">Asynchronous pipe to register.</param>
-    /// <param name="condition">Optional condition for executing the pipe.</param>
-    /// <param name="errorHandler">Optional error handler.</param>
+    /// <param name="action">Function to execute when an exception occurs.</param>
     /// <returns>Updated FluentPipeline object for method chaining.</returns>
-    public FluentPipeline<T> RegisterSequentialAsync(Func<T, Task<T>> pipe, Func<T, bool>? condition = null,
-        Action<Exception>? errorHandler = null)
+    public FluentPipeline<T> OnError(Action<Exception> action)
     {
-        _pipes.Add(async input =>
-        {
-            if (condition != null && !condition(input))
-            {
-                return input;
-            }
-
-            try
-            {
-                return await pipe(input);
-            }
-            catch (Exception ex)
-            {
-                errorHandler?.Invoke(ex);
-                return input;
-            }
-        });
-
+        _onError = action;
         return this;
     }
 
@@ -153,6 +160,16 @@ public class FluentPipeline<T>
         return this;
     }
 
+    /// <summary>
+    /// Registers a global PostProcess function that executes after all pipes have completed.
+    /// </summary>
+    /// <param name="action">Function to execute.</param>
+    /// <returns>Updated FluentPipeline object for method chaining.</returns>
+    public FluentPipeline<T> RegisterPostProcess(Func<T, Task<T>> action)
+    {
+        _postProcess = action;
+        return this;
+    }
 
     /// <summary>
     /// Registers a global PreProcess function that executes before any pipe runs.
@@ -166,66 +183,47 @@ public class FluentPipeline<T>
     }
 
     /// <summary>
-    /// Registers a global PostProcess function that executes after all pipes have completed.
+    /// Registers a sequential synchronous pipe with an optional condition.
     /// </summary>
-    /// <param name="action">Function to execute.</param>
+    /// <param name="pipe">Synchronous pipe to register.</param>
+    /// <param name="condition">Optional condition for executing the pipe.</param>
+    /// <param name="errorHandler">Optional error handler.</param>
     /// <returns>Updated FluentPipeline object for method chaining.</returns>
-    public FluentPipeline<T> RegisterPostProcess(Func<T, Task<T>> action)
+    public FluentPipeline<T> RegisterSequential(IPipeFilter<T> pipe, Func<T, bool>? condition = null,
+        Action<Exception>? errorHandler = null)
     {
-        _postProcess = action;
-        return this;
+        return RegisterSequentialAsync(async input => await Task.FromResult(pipe.Process(input)), condition,
+            errorHandler);
     }
 
     /// <summary>
-    /// Sets a global OnError function that acts upon an unhandled exception during execution.
+    /// Registers an asynchronous pipe with an optional condition.
     /// </summary>
-    /// <param name="action">Function to execute when an exception occurs.</param>
+    /// <param name="pipe">Asynchronous pipe to register.</param>
+    /// <param name="condition">Optional condition for executing the pipe.</param>
+    /// <param name="errorHandler">Optional error handler.</param>
     /// <returns>Updated FluentPipeline object for method chaining.</returns>
-    public FluentPipeline<T> OnError(Action<Exception> action)
+    public FluentPipeline<T> RegisterSequentialAsync(Func<T, Task<T>> pipe, Func<T, bool>? condition = null,
+        Action<Exception>? errorHandler = null)
     {
-        _onError = action;
+        _pipes.Add(async input =>
+        {
+            if (condition != null && !condition(input))
+            {
+                return input;
+            }
+
+            try
+            {
+                return await pipe(input);
+            }
+            catch (Exception ex)
+            {
+                errorHandler?.Invoke(ex);
+                return input;
+            }
+        });
+
         return this;
-    }
-
-
-    /// <summary>
-    /// Executes the pipeline asynchronously.
-    /// </summary>
-    /// <param name="input">Initial input data.</param>
-    /// <returns>Task representing the final processed data.</returns>
-    public async Task<T> ExecuteAsync(T input)
-    {
-        try
-        {
-            // PreProcess
-            if (_preProcess != null)
-            {
-                input = await _preProcess(input);
-            }
-
-            // Sequential execution
-            foreach (var pipe in _pipes)
-            {
-                input = await pipe(input);
-            }
-
-            // Parallel execution
-            var parallelTasks = _parallelPipes.Select(pipe => pipe(input)).ToArray();
-            await Task.WhenAll(parallelTasks);
-
-            // PostProcess
-            if (_postProcess != null)
-            {
-                input = await _postProcess(input);
-            }
-
-            return input;
-        }
-        catch (Exception ex)
-        {
-            // Global error handling
-            _onError?.Invoke(ex);
-            throw;
-        }
     }
 }

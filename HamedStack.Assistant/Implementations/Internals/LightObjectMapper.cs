@@ -4,11 +4,12 @@
 namespace HamedStack.Assistant.Implementations.Internals;
 
 /// <summary>
-/// Provides a lightweight object-to-object mapper, enabling the copying of properties from one object to another.
+/// Provides a lightweight object-to-object mapper, enabling the copying of properties from one
+/// object to another.
 /// </summary>
 /// <remarks>
-/// This class is designed for efficient and simplistic property mapping between objects of different types. 
-/// Property mappings are cached to optimize subsequent copy operations.
+/// This class is designed for efficient and simplistic property mapping between objects of
+/// different types. Property mappings are cached to optimize subsequent copy operations.
 /// </remarks>
 internal class LightObjectMapper : ObjectCopyBase
 {
@@ -23,8 +24,8 @@ internal class LightObjectMapper : ObjectCopyBase
     /// <param name="source">The source object from which to copy properties.</param>
     /// <param name="target">The target object to which properties are copied.</param>
     /// <remarks>
-    /// Only matching properties by name and type will be copied.
-    /// If the source and target types haven't been mapped before, it will create a new mapping before performing the copy.
+    /// Only matching properties by name and type will be copied. If the source and target types
+    /// haven't been mapped before, it will create a new mapping before performing the copy.
     /// </remarks>
     internal override void Copy(object source, object target)
     {
@@ -49,9 +50,7 @@ internal class LightObjectMapper : ObjectCopyBase
     /// </summary>
     /// <param name="source">The source type to map.</param>
     /// <param name="target">The target type to which properties are mapped.</param>
-    /// <remarks>
-    /// Property mappings are cached to optimize subsequent copy operations.
-    /// </remarks>
+    /// <remarks>Property mappings are cached to optimize subsequent copy operations.</remarks>
     internal override void MapTypes(Type source, Type target)
     {
         var key = GetMapKey(source, target);

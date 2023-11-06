@@ -2,11 +2,11 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedType.Global
 
-using System.Collections.ObjectModel;
-using System.Linq.Expressions;
 using HamedStack.Assistant.Extensions.EnumerableExtended;
 using HamedStack.Assistant.Extensions.ExpressionExtended;
 using HamedStack.Assistant.Implementations;
+using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 
 namespace HamedStack.Assistant.Extensions.QueryableExtended;
 
@@ -168,7 +168,7 @@ public static class QueryableExtensions
     {
         return query.Skip((pageIndex - 1) * pageSize).Take(pageSize);
     }
-    
+
     public static IReadOnlyCollection<T> ToReadOnlyCollection<T>(this IQueryable<T> queryable)
     {
         return queryable.AsEnumerable().ToReadOnlyCollection();

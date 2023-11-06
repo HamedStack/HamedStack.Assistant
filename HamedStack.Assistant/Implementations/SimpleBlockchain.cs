@@ -14,7 +14,8 @@ namespace HamedStack.Assistant.Implementations;
 /// </summary>
 /// <typeparam name="T">The type of data to be stored in the blockchain.</typeparam>
 /// <remarks>
-/// This is a basic blockchain implementation and may not include advanced features or security mechanisms of real-world blockchain solutions.
+/// This is a basic blockchain implementation and may not include advanced features or security
+/// mechanisms of real-world blockchain solutions.
 /// </remarks>
 public class SimpleBlockchain<T>
 {
@@ -23,9 +24,7 @@ public class SimpleBlockchain<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="SimpleBlockchain{T}"/> class.
     /// </summary>
-    /// <remarks>
-    /// The constructor initializes the blockchain with a genesis block.
-    /// </remarks>
+    /// <remarks>The constructor initializes the blockchain with a genesis block.</remarks>
     public SimpleBlockchain()
     {
         Chain = new List<Block>
@@ -45,8 +44,8 @@ public class SimpleBlockchain<T>
     /// <param name="data">The data to be stored in the block.</param>
     /// <example>
     /// <code>
-    /// var blockchain = new Blockchain&lt;string&gt;();
-    /// blockchain.AddBlock("Hello, World!");
+    ///var blockchain = new Blockchain&lt;string&gt;();
+    ///blockchain.AddBlock("Hello, World!");
     /// </code>
     /// </example>
     public void AddBlock(T data)
@@ -110,7 +109,8 @@ public class SimpleBlockchain<T>
         /// </summary>
         /// <returns>The calculated hash as a string.</returns>
         /// <remarks>
-        /// The hash is calculated based on the block's timestamp, its previous block's hash, and its data.
+        /// The hash is calculated based on the block's timestamp, its previous block's hash, and
+        /// its data.
         /// </remarks>
         internal string CalculateHash()
         {

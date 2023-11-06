@@ -1,8 +1,8 @@
 ﻿// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
-using System.Text;
 using HamedStack.Assistant.Enums;
+using System.Text;
 
 namespace HamedStack.Assistant.Implementations.Internals;
 

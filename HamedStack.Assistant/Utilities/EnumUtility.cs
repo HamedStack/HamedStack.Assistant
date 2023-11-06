@@ -1,10 +1,9 @@
-﻿
-// ReSharper disable UnusedType.Global
+﻿// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
+using HamedStack.Assistant.Implementations;
 using System.ComponentModel;
 using System.Reflection;
-using HamedStack.Assistant.Implementations;
 
 namespace HamedStack.Assistant.Utilities;
 
@@ -28,7 +27,8 @@ public static class EnumUtility
     }
 
     /// <summary>
-    /// Determines if a specified enumeration of type <typeparamref name="TEnum"/> contains a given value as a string.
+    /// Determines if a specified enumeration of type <typeparamref name="TEnum"/> contains a given
+    /// value as a string.
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <param name="ignoreCase">Determines if the comparison should be case insensitive.</param>
@@ -42,7 +42,8 @@ public static class EnumUtility
     }
 
     /// <summary>
-    /// Determines if the specified enumeration of type <typeparamref name="TEnum"/> contains a given enumeration value.
+    /// Determines if the specified enumeration of type <typeparamref name="TEnum"/> contains a
+    /// given enumeration value.
     /// </summary>
     /// <typeparam name="TEnum">The type of the enumeration.</typeparam>
     /// <param name="value">The enumeration value to check.</param>
@@ -56,7 +57,9 @@ public static class EnumUtility
     /// Gets all the descriptions of the values in an enumeration of type <typeparamref name="TEnum"/>.
     /// </summary>
     /// <typeparam name="TEnum">The enumeration type.</typeparam>
-    /// <param name="replaceNullWithEnumName">If true, replaces null descriptions with the enumeration name.</param>
+    /// <param name="replaceNullWithEnumName">
+    /// If true, replaces null descriptions with the enumeration name.
+    /// </param>
     /// <returns>An enumeration of descriptions.</returns>
     public static IEnumerable<string> GetDescriptions<TEnum>(bool replaceNullWithEnumName = false) where TEnum : Enum
     {
@@ -64,7 +67,8 @@ public static class EnumUtility
     }
 
     /// <summary>
-    /// Retrieves a list of details for each value in the specified enumeration of type <typeparamref name="TEnum"/>.
+    /// Retrieves a list of details for each value in the specified enumeration of type
+    /// <typeparamref name="TEnum"/>.
     /// </summary>
     /// <typeparam name="TEnum">The type of the enumeration.</typeparam>
     /// <returns>A collection of enumeration details.</returns>
@@ -91,7 +95,8 @@ public static class EnumUtility
     }
 
     /// <summary>
-    /// Retrieves a filtered list of details for each value in the specified enumeration of type <typeparamref name="TEnum"/>.
+    /// Retrieves a filtered list of details for each value in the specified enumeration of type
+    /// <typeparamref name="TEnum"/>.
     /// </summary>
     /// <typeparam name="TEnum">The type of the enumeration.</typeparam>
     /// <param name="predicate">The function to test each enumeration detail for a condition.</param>
@@ -123,7 +128,8 @@ public static class EnumUtility
     }
 
     /// <summary>
-    /// Retrieves the string representations of all values in the specified enumeration of type <typeparamref name="TEnum"/>.
+    /// Retrieves the string representations of all values in the specified enumeration of type
+    /// <typeparamref name="TEnum"/>.
     /// </summary>
     /// <typeparam name="TEnum">The type of the enumeration.</typeparam>
     /// <returns>A collection of string representations of the enumeration values.</returns>
@@ -159,7 +165,9 @@ public static class EnumUtility
     /// </summary>
     /// <typeparam name="TEnum">The type of the enumeration.</typeparam>
     /// <param name="value">The string value to check.</param>
-    /// <param name="ignoreCase">If set to true, performs a case-insensitive comparison. Default is false.</param>
+    /// <param name="ignoreCase">
+    /// If set to true, performs a case-insensitive comparison. Default is false.
+    /// </param>
     /// <returns>true if the string value is present in the enumeration; otherwise, false.</returns>
     public static bool IsInEnum<TEnum>(this string value, bool ignoreCase = false) where TEnum : Enum
     {
@@ -168,12 +176,17 @@ public static class EnumUtility
     }
 
     /// <summary>
-    /// Determines if the specified string value matches any description in the enumeration of type <typeparamref name="TEnum"/>.
+    /// Determines if the specified string value matches any description in the enumeration of type
+    /// <typeparamref name="TEnum"/>.
     /// </summary>
     /// <typeparam name="TEnum">The type of the enumeration.</typeparam>
     /// <param name="value">The string value to check.</param>
-    /// <param name="ignoreCase">If set to true, performs a case-insensitive comparison. Default is false.</param>
-    /// <returns>true if the string value matches any description in the enumeration; otherwise, false.</returns>
+    /// <param name="ignoreCase">
+    /// If set to true, performs a case-insensitive comparison. Default is false.
+    /// </param>
+    /// <returns>
+    /// true if the string value matches any description in the enumeration; otherwise, false.
+    /// </returns>
     public static bool IsInEnumDescription<TEnum>(this string value, bool ignoreCase = false) where TEnum : Enum
     {
         var enums = GetDescriptions<TEnum>().Select(e => ignoreCase ? e.ToLower() : e);
@@ -184,7 +197,9 @@ public static class EnumUtility
     /// Gets the description associated with an enumeration value.
     /// </summary>
     /// <param name="enum">The enumeration value.</param>
-    /// <param name="returnEnumNameInsteadOfNull">If true, returns the enumeration name if a description is not available.</param>
+    /// <param name="returnEnumNameInsteadOfNull">
+    /// If true, returns the enumeration name if a description is not available.
+    /// </param>
     /// <returns>The description or the enumeration name.</returns>
     private static string? GetDescription(this Enum @enum, bool returnEnumNameInsteadOfNull = false)
     {

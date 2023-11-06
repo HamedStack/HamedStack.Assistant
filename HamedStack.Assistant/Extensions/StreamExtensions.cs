@@ -1,11 +1,11 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
 
-using System.Text;
 using HamedStack.Assistant.Enums;
+using HamedStack.Assistant.Extensions.ByteArrayExtended;
 using HamedStack.Assistant.Extensions.ObjectExtended;
 using HamedStack.Assistant.Extensions.StringExtended;
-using HamedStack.Assistant.Extensions.ByteArrayExtended;
+using System.Text;
 
 namespace HamedStack.Assistant.Extensions.StreamExtended;
 

@@ -1,9 +1,9 @@
 ﻿// ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
 
-using System.Data;
 using HamedStack.Assistant.Extensions.ObjectExtended;
 using HamedStack.Assistant.Extensions.StringExtended;
+using System.Data;
 
 namespace HamedStack.Assistant.Extensions.DataRowViewExtended;
 

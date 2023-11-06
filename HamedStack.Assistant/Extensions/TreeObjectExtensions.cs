@@ -1,5 +1,4 @@
-﻿
-// ReSharper disable UnusedMember.Global
+﻿// ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 
 using HamedStack.Assistant.Abstractions;
@@ -12,7 +11,8 @@ namespace HamedStack.Assistant.Extensions;
 public static class TreeObjectExtensions
 {
     /// <summary>
-    /// Performs a Breadth-First Search (BFS) traversal on the tree, starting from the specified root node.
+    /// Performs a Breadth-First Search (BFS) traversal on the tree, starting from the specified
+    /// root node.
     /// </summary>
     /// <typeparam name="T">The type of the node identifier.</typeparam>
     /// <param name="rootNode">The root node of the tree.</param>
@@ -120,6 +120,7 @@ public static class TreeObjectExtensions
                 stack.Push(child);
         }
     }
+
     /// <summary>
     /// Retrieves all leaf nodes that match a specific condition using Depth-First Search (DFS).
     /// </summary>
@@ -569,7 +570,8 @@ public static class TreeObjectExtensions
     }
 
     /// <summary>
-    /// Checks if the tree is complete (all levels are fully filled except possibly the last level, which is filled left to right).
+    /// Checks if the tree is complete (all levels are fully filled except possibly the last level,
+    /// which is filled left to right).
     /// </summary>
     /// <typeparam name="T">The type of the node identifier.</typeparam>
     /// <param name="rootNode">The root node of the tree.</param>
@@ -688,7 +690,8 @@ public static class TreeObjectExtensions
         var totalInternalNodes = rootNode.CountInternalNodes();
         var leafNodes = rootNode.CountLeafNodes();
 
-        // For a perfect binary tree, the number of internal nodes is one less than the number of leaf nodes
+        // For a perfect binary tree, the number of internal nodes is one less than the number of
+        // leaf nodes
         return totalInternalNodes == leafNodes - 1;
     }
 
@@ -720,7 +723,8 @@ public static class TreeObjectExtensions
     }
 
     /// <summary>
-    /// Checks whether the tree is balanced, i.e., the height of the left and right subtrees of every node differ by at most 1.
+    /// Checks whether the tree is balanced, i.e., the height of the left and right subtrees of
+    /// every node differ by at most 1.
     /// </summary>
     /// <typeparam name="T">The type of the node identifier.</typeparam>
     /// <param name="rootNode">The root node of the tree.</param>
@@ -787,19 +791,7 @@ public static class TreeObjectExtensions
     {
         return new[] { rootNode }.Concat(rootNode.Children.SelectMany(ToFlatten));
     }
-    /// <summary>
-    /// Performs an action on each node while walking through the tree using Depth-First Search (DFS).
-    /// </summary>
-    /// <typeparam name="T">The type of the node identifier.</typeparam>
-    /// <param name="rootNode">The root node of the tree.</param>
-    /// <param name="action">The action to be performed on each node.</param>
-    public static void WalkOnNodes<T>(
-        this ITreeObject<T> rootNode,
-        Action<ITreeObject<T>> action)
-    {
-        foreach (var node in rootNode.DepthFirstSearch())
-            action(node);
-    }
+
     /// <summary>
     /// Performs an action on each leaf node in the tree using Depth-First Search (DFS).
     /// </summary>
@@ -815,10 +807,18 @@ public static class TreeObjectExtensions
             action(leafNode);
         }
     }
+
+    /// <summary>
+    /// Performs an action on each node while walking through the tree using Depth-First Search (DFS).
+    /// </summary>
+    /// <typeparam name="T">The type of the node identifier.</typeparam>
+    /// <param name="rootNode">The root node of the tree.</param>
+    /// <param name="action">The action to be performed on each node.</param>
+    public static void WalkOnNodes<T>(
+        this ITreeObject<T> rootNode,
+        Action<ITreeObject<T>> action)
+    {
+        foreach (var node in rootNode.DepthFirstSearch())
+            action(node);
+    }
 }
-
-
-
-
-
-

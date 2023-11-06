@@ -8,7 +8,8 @@
 public interface INullValueDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKey : notnull
 {
     /// <summary>
-    /// Gets or sets the value associated with the specified key. Returns the default value if the key does not exist.
+    /// Gets or sets the value associated with the specified key. Returns the default value if the
+    /// key does not exist.
     /// </summary>
     /// <param name="key">The key of the value to get or set.</param>
     /// <value>The value associated with the specified key.</value>

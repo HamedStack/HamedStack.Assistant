@@ -11,8 +11,8 @@ namespace HamedStack.Assistant.Implementations;
 public abstract class Tree<T> where T : Tree<T>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="Tree{T}"/> class.
-    /// Constructor sets the parent node and adds this node to the parent's child nodes.
+    /// Initializes a new instance of the <see cref="Tree{T}"/> class. Constructor sets the parent
+    /// node and adds this node to the parent's child nodes.
     /// </summary>
     /// <param name="parent">The parent node or null if it's a root node.</param>
     protected Tree(T? parent)
@@ -91,11 +91,12 @@ public abstract class Tree<T> where T : Tree<T>
     /// Gets the depth of the current node in the tree.
     /// </summary>
     public int NodeDepth => IsRoot ? 0 : Parent!.NodeDepth + 1;
-    
+
     /// <summary>
     /// Gets the parent node of this tree node.
     /// </summary>
     public T? Parent { get; protected set; }
+
     /// <summary>
     /// Gets the siblings of the current node (nodes that share the same parent).
     /// </summary>
@@ -241,7 +242,6 @@ public abstract class Tree<T> where T : Tree<T>
 
         throw new InvalidOperationException(
             "The type parameter T must have a constructor that takes a single parameter of type T.");
-
     }
 
     /// <summary>
@@ -256,7 +256,8 @@ public abstract class Tree<T> where T : Tree<T>
     }
 
     /// <summary>
-    /// Performs depth-first traversal (in-order) of the tree and applies the specified action to each node.
+    /// Performs depth-first traversal (in-order) of the tree and applies the specified action to
+    /// each node.
     /// </summary>
     /// <param name="action">The action to apply to each node.</param>
     public void DepthFirstInOrderTraversal(Action<T> action)
@@ -273,7 +274,8 @@ public abstract class Tree<T> where T : Tree<T>
     }
 
     /// <summary>
-    /// Performs depth-first traversal (post-order) of the tree and applies the specified action to each node.
+    /// Performs depth-first traversal (post-order) of the tree and applies the specified action to
+    /// each node.
     /// </summary>
     /// <param name="action">The action to apply to each node.</param>
     public void DepthFirstPostOrderTraversal(Action<T> action)
@@ -286,7 +288,8 @@ public abstract class Tree<T> where T : Tree<T>
     }
 
     /// <summary>
-    /// Performs depth-first traversal (pre-order) of the tree and applies the specified action to each node.
+    /// Performs depth-first traversal (pre-order) of the tree and applies the specified action to
+    /// each node.
     /// </summary>
     /// <param name="action">The action to apply to each node.</param>
     public void DepthFirstPreOrderTraversal(Action<T> action)
@@ -297,6 +300,7 @@ public abstract class Tree<T> where T : Tree<T>
             child.DepthFirstPreOrderTraversal(action);
         }
     }
+
     /// <summary>
     /// Finds a node in the tree that satisfies the given predicate.
     /// </summary>
@@ -372,6 +376,7 @@ public abstract class Tree<T> where T : Tree<T>
     {
         Parent?.Children.Remove((T)this);
     }
+
     /// <summary>
     /// Removes the entire subtree rooted at the current node, including the current node itself.
     /// </summary>
@@ -383,6 +388,7 @@ public abstract class Tree<T> where T : Tree<T>
         }
         Remove();
     }
+
     /// <summary>
     /// Replaces the specified child node with another node.
     /// </summary>
@@ -397,6 +403,7 @@ public abstract class Tree<T> where T : Tree<T>
         newChild.Parent = (T)this;
         oldChild.Parent = null;
     }
+
     /// <summary>
     /// Reverses the order of child nodes in the current node.
     /// </summary>
@@ -442,7 +449,8 @@ public abstract class Tree<T> where T : Tree<T>
     }
 
     /// <summary>
-    /// Validates the tree rooted at the current node by applying the specified validation rule to all nodes.
+    /// Validates the tree rooted at the current node by applying the specified validation rule to
+    /// all nodes.
     /// </summary>
     /// <param name="validationRule">The validation rule to check for each node.</param>
     /// <returns>True if all nodes in the tree satisfy the validation rule, otherwise false.</returns>
@@ -482,6 +490,7 @@ public abstract class Tree<T> where T : Tree<T>
             child.BuildStringRepresentation(stringBuilder, indentationLevel + 1);
         }
     }
+
     private void BuildStringRepresentationWithNamesAndValues(StringBuilder stringBuilder, int indentationLevel)
     {
         stringBuilder.Append(new string(' ', indentationLevel * 4));
@@ -493,4 +502,3 @@ public abstract class Tree<T> where T : Tree<T>
         }
     }
 }
-

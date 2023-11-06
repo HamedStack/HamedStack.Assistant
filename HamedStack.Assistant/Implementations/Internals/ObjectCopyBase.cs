@@ -8,8 +8,8 @@ using System.Reflection;
 namespace HamedStack.Assistant.Implementations.Internals;
 
 /// <summary>
-/// Represents the base class for object-to-object copying operations. 
-/// Provides functionalities to map and copy properties between objects of different types.
+/// Represents the base class for object-to-object copying operations. Provides functionalities to
+/// map and copy properties between objects of different types.
 /// </summary>
 internal abstract class ObjectCopyBase
 {
@@ -49,11 +49,14 @@ internal abstract class ObjectCopyBase
     }
 
     /// <summary>
-    /// Retrieves a collection of <see cref="PropertyMap"/> objects that represent matching properties between the source and target types.
+    /// Retrieves a collection of <see cref="PropertyMap"/> objects that represent matching
+    /// properties between the source and target types.
     /// </summary>
     /// <param name="sourceType">The source type.</param>
     /// <param name="targetType">The target type.</param>
-    /// <returns>An IEnumerable of <see cref="PropertyMap"/> representing matching properties between the two types.</returns>
+    /// <returns>
+    /// An IEnumerable of <see cref="PropertyMap"/> representing matching properties between the two types.
+    /// </returns>
     protected static IEnumerable<PropertyMap> GetMatchingProperties
         (Type sourceType, Type targetType)
     {

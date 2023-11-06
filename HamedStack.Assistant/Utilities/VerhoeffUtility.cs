@@ -1,5 +1,4 @@
-﻿
-// ReSharper disable UnusedType.Global
+﻿// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable IdentifierTypo
 
@@ -43,7 +42,7 @@ public static class VerhoeffUtility
     /// </summary>
     /// <param name="text">The text for which the check digit should be generated.</param>
     /// <returns>The Verhoeff check digit as a string.</returns>
-     public static string Generate(string text)
+    public static string Generate(string text)
     {
         var c = 0;
         var myArray = StringToReversedIntArray(text);
@@ -57,7 +56,9 @@ public static class VerhoeffUtility
     /// Validates a number using the Verhoeff check digit algorithm.
     /// </summary>
     /// <param name="number">The number with the check digit to validate.</param>
-    /// <returns><c>true</c> if the number is valid according to the Verhoeff algorithm; otherwise, <c>false</c>.</returns>
+    /// <returns>
+    /// <c>true</c> if the number is valid according to the Verhoeff algorithm; otherwise, <c>false</c>.
+    /// </returns>
     public static bool Validate(string number)
     {
         var c = 0;

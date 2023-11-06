@@ -1,5 +1,4 @@
-﻿
-// ReSharper disable UnusedType.Global
+﻿// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable StringLiteralTypo
 
@@ -40,7 +39,9 @@ public static class RandomUtility
     /// <summary>
     /// Generates a random DateTime value within an optional range.
     /// </summary>
-    /// <param name="startDateTime">Optional start date and time. Default is current DateTime minus 100 years.</param>
+    /// <param name="startDateTime">
+    /// Optional start date and time. Default is current DateTime minus 100 years.
+    /// </param>
     /// <param name="endDateTime">Optional end date and time. Default is current DateTime.</param>
     /// <returns>A randomly generated DateTime value within the given range.</returns>
     public static DateTime GetRandomDateTime(DateTime? startDateTime = null, DateTime? endDateTime = null)
@@ -58,7 +59,10 @@ public static class RandomUtility
     /// Generates a random string of specified length using the given set of characters.
     /// </summary>
     /// <param name="length">Length of the desired random string.</param>
-    /// <param name="chars">Set of characters to be used for generating the random string. Default includes alphanumeric characters and underscore.</param>
+    /// <param name="chars">
+    /// Set of characters to be used for generating the random string. Default includes alphanumeric
+    /// characters and underscore.
+    /// </param>
     /// <exception cref="ArgumentException">Thrown when the specified length is zero or negative.</exception>
     /// <returns>A randomly generated string.</returns>
     public static string GetRandomString(int length,

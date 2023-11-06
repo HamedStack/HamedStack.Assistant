@@ -2,8 +2,8 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedType.Global
 
-using System.Data;
 using HamedStack.Assistant.Extensions.ArrayExtended;
+using System.Data;
 
 namespace HamedStack.Assistant.Extensions.ConnectionStateExtended;
 

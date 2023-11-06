@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <WarningsAsErrors>Nullable;CS8600;CS8602;CS8603;CS0619</WarningsAsErrors>
         <Authors>Hamed Fathi</Authors>
-        <Company/>
+        <Company />
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <Version>1.0.1</Version>
         <Description>A huge collection of useful extension methods, utilities and types for the .NET ecosystem.</Description>
@@ -17,6 +17,10 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="..\README.md" Pack="true" PackagePath="\"/>
+      <Compile Remove="Extensions\TaskExtensions.Tuples.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
+        <None Include="Extensions\TaskExtensions.Tuples.cs" />
     </ItemGroup>
 </Project>

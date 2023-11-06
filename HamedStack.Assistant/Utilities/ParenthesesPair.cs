@@ -1,7 +1,8 @@
 ﻿namespace HamedStack.Assistant.Utilities;
 
 /// <summary>
-/// Represents a pair of parentheses within a string or expression, providing details like its position, depth, and the value contained within.
+/// Represents a pair of parentheses within a string or expression, providing details like its
+/// position, depth, and the value contained within.
 /// </summary>
 public struct ParenthesesPair
 {

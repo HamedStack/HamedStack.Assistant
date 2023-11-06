@@ -6,7 +6,9 @@ namespace HamedStack.Assistant.Implementations;
 /// Provides a high-resolution date and time utility ensuring unique ticks for subsequent calls.
 /// </summary>
 /// <remarks>
-/// The <see cref="HiResDateTime"/> class is designed to generate unique ticks for subsequent calls by incrementing the previous timestamp by 1 tick if the current time matches the previous one. This helps in scenarios where uniqueness in ticks is required within the same application.
+/// The <see cref="HiResDateTime"/> class is designed to generate unique ticks for subsequent calls
+/// by incrementing the previous timestamp by 1 tick if the current time matches the previous one.
+/// This helps in scenarios where uniqueness in ticks is required within the same application.
 /// </remarks>
 public class HiResDateTime
 {
@@ -16,11 +18,10 @@ public class HiResDateTime
     /// <summary>
     /// Gets the current local date and time in ticks, ensuring that it's unique and never decreases.
     /// </summary>
-    /// <value>
-    /// The current local date and time in ticks.
-    /// </value>
+    /// <value>The current local date and time in ticks.</value>
     /// <remarks>
-    /// This property ensures uniqueness by incrementing the previous timestamp by 1 tick if the current time matches the previous one.
+    /// This property ensures uniqueness by incrementing the previous timestamp by 1 tick if the
+    /// current time matches the previous one.
     /// </remarks>
     public static long NowTicks
     {
@@ -42,11 +43,10 @@ public class HiResDateTime
     /// <summary>
     /// Gets the current UTC date and time in ticks, ensuring that it's unique and never decreases.
     /// </summary>
-    /// <value>
-    /// The current UTC date and time in ticks.
-    /// </value>
+    /// <value>The current UTC date and time in ticks.</value>
     /// <remarks>
-    /// This property ensures uniqueness by incrementing the previous UTC timestamp by 1 tick if the current UTC time matches the previous one.
+    /// This property ensures uniqueness by incrementing the previous UTC timestamp by 1 tick if the
+    /// current UTC time matches the previous one.
     /// </remarks>
     public static long UtcNowTicks
     {

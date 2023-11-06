@@ -3,23 +3,14 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedMember.Global
 
-using System.Runtime.CompilerServices;
 using HamedStack.Assistant.Extensions.QueueExtended;
 using HamedStack.Assistant.Implementations.Internals;
+using System.Runtime.CompilerServices;
 
 namespace HamedStack.Assistant.Extensions.TaskExtended;
 
 public static partial class TaskExtensions
 {
-    public static void ExecuteTimeout(this Task task, TimeSpan maxDelay)
-    {
-        var delayTask = Task.Delay(maxDelay);
-        var finishedTaskIndex = Task.WaitAny(task, delayTask);
-        if (finishedTaskIndex != 0)
-        {
-            throw new TimeoutException("Task did not finish in the desired time slot.");
-        }
-    }
     public static async Task<IEnumerable<TSource>> AsEnumerable<TSource>(
         this Task<IEnumerable<TSource>> source)
     {
@@ -98,6 +89,16 @@ public static partial class TaskExtensions
         return (await source).DequeueAsEnumerable();
     }
 
+    public static void ExecuteTimeout(this Task task, TimeSpan maxDelay)
+    {
+        var delayTask = Task.Delay(maxDelay);
+        var finishedTaskIndex = Task.WaitAny(task, delayTask);
+        if (finishedTaskIndex != 0)
+        {
+            throw new TimeoutException("Task did not finish in the desired time slot.");
+        }
+    }
+
     public static async Task Finally(this Task task, Func<Task> finallyAction)
     {
         try
@@ -110,8 +111,36 @@ public static partial class TaskExtensions
         }
     }
 
+    public static void FireAndForget(this Task task, Action<Exception>? onException = null, CancellationToken cancellationToken = default)
+    {
+        if (onException != null)
+        {
+            task.ContinueWith(t =>
+                {
+                    if (t.Exception?.InnerException != null)
+                        onException(t.Exception.InnerException);
+                },
+                cancellationToken: cancellationToken,
+                TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Current
+            );
+        }
+    }
+
+    public static async void FireAndForget(this Task @this, bool continueOnCapturedContext = true,
+        Action<Exception>? onException = null)
+    {
+        try
+        {
+            await @this.ConfigureAwait(continueOnCapturedContext);
+        }
+        catch (Exception e) when (onException != null)
+        {
+            onException(e);
+        }
+    }
+
     public static async Task<IEnumerable<T>?> ForEachAsync<T>(this IEnumerable<T>? source, Func<T, Task> action,
-            CancellationToken cancellationToken = default)
+                    CancellationToken cancellationToken = default)
     {
         if (source is null) return source;
 
@@ -125,8 +154,18 @@ public static partial class TaskExtensions
         return forEachAsync;
     }
 
+    public static TaskAwaiter<T[]> GetAwaiter<T>(this IEnumerable<Task<T>> tasks)
+    {
+        return Task.WhenAll(tasks).GetAwaiter();
+    }
+
+    public static TaskAwaiter GetAwaiter(this IEnumerable<Task> tasks)
+    {
+        return Task.WhenAll(tasks).GetAwaiter();
+    }
+
     public static Task<TV> GroupJoin<T, TU, TK, TV>(this Task<T> source, Task<TU> inner, Func<T, TK> outerKeySelector,
-        Func<TU, TK> innerKeySelector, Func<T, Task<TU>, TV> resultSelector)
+                Func<TU, TK> innerKeySelector, Func<T, Task<TU>, TV> resultSelector)
     {
         return source.TaskBind(t =>
             {
@@ -189,19 +228,6 @@ public static partial class TaskExtensions
     public static void RunSync(this Task task)
     {
         AsyncHelper.RunSync(task);
-    }
-
-    public static async void SafeFireAndForget(this Task @this, bool continueOnCapturedContext = true,
-        Action<Exception>? onException = null)
-    {
-        try
-        {
-            await @this.ConfigureAwait(continueOnCapturedContext);
-        }
-        catch (Exception e) when (onException != null)
-        {
-            onException(e);
-        }
     }
 
     public static Task<TU> Select<T, TU>(this Task<T> source, Func<T, TU> selector)

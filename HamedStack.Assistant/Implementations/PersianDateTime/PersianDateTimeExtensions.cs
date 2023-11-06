@@ -30,7 +30,9 @@ public static class PersianDateTimeExtensions
     /// Converts the specified nullable DateTime value to a PersianDateTime value.
     /// </summary>
     /// <param name="dt">The DateTime value to convert.</param>
-    /// <returns>A nullable PersianDateTime corresponding to the provided DateTime; null if the input is null.</returns>
+    /// <returns>
+    /// A nullable PersianDateTime corresponding to the provided DateTime; null if the input is null.
+    /// </returns>
     public static PersianDateTime? ToPersianDateTime(this DateTime? dt)
     {
         return !dt.HasValue ? null : new PersianDateTime(dt.Value);
@@ -50,7 +52,9 @@ public static class PersianDateTimeExtensions
     /// Converts the specified PersianDateTime value to its relative string representation.
     /// </summary>
     /// <param name="date">The PersianDateTime value to convert.</param>
-    /// <returns>A string that represents the relative time difference between now and the specified date in Persian.</returns>
+    /// <returns>
+    /// A string that represents the relative time difference between now and the specified date in Persian.
+    /// </returns>
     public static string ToPersianRelativeDate(this PersianDateTime date)
     {
         var gDate = date.ToDateTime();
@@ -61,7 +65,9 @@ public static class PersianDateTimeExtensions
     /// Converts the specified DateTime value to its relative string representation in Persian.
     /// </summary>
     /// <param name="date">The DateTime value to convert.</param>
-    /// <returns>A string that represents the relative time difference between now and the specified date in Persian.</returns>
+    /// <returns>
+    /// A string that represents the relative time difference between now and the specified date in Persian.
+    /// </returns>
     public static string ToPersianRelativeDate(this DateTime date)
     {
         var timeSince = DateTime.Now.Subtract(date);

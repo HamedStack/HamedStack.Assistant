@@ -14,7 +14,7 @@ public static class AssemblyUtility
     /// Retrieves the entry assembly and all its referenced assemblies.
     /// </summary>
     /// <returns>
-    /// A collection of assemblies, including the entry assembly and all its referenced assemblies. 
+    /// A collection of assemblies, including the entry assembly and all its referenced assemblies.
     /// If there's no entry assembly, null is returned.
     /// </returns>
     public static IEnumerable<Assembly>? GetEntryAssemblyWithReferences()

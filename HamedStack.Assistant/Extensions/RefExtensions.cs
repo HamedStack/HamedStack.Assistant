@@ -23,16 +23,18 @@ public static class RefExtensions
     /// <typeparam name="T">The type of the elements in the list.</typeparam>
     /// <param name="list">The list on which the action is performed.</param>
     /// <param name="action">The action to perform on each element of the <see cref="List{T}"/>.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="list"/> or the <paramref name="action"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when the <paramref name="list"/> or the <paramref name="action"/> is null.
+    /// </exception>
     /// <example>
     /// <code>
-    /// var list = new List&lt;PointStruct&gt;() {
-    ///         new PointStruct(1, 10),
-    ///         new PointStruct(2, 20),
-    ///         new PointStruct(3, 30)
-    /// };
-    /// list.ForEachRef(static (ref PointStruct p) => p.Swap());
-    /// foreach (var p in list) { Console.WriteLine(p); }
+    ///var list = new List&lt;PointStruct&gt;() {
+    ///new PointStruct(1, 10),
+    ///new PointStruct(2, 20),
+    ///new PointStruct(3, 30)
+    ///};
+    ///list.ForEachRef(static (ref PointStruct p) =&gt; p.Swap());
+    ///foreach (var p in list) { Console.WriteLine(p); }
     /// </code>
     /// </example>
     public static void ForEachRef<T>(this List<T> list, RefAction<T> action) where T : struct

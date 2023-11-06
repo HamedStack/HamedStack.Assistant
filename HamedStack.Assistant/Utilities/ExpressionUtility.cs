@@ -1,5 +1,4 @@
-﻿
-// ReSharper disable UnusedType.Global
+﻿// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
 using System.Linq.Expressions;
@@ -8,8 +7,8 @@ using System.Reflection;
 namespace HamedStack.Assistant.Utilities;
 
 /// <summary>
-/// Provides utility methods for creating and working with expressions, particularly for
-/// generating getters and setters for properties, and for working with attributes and members.
+/// Provides utility methods for creating and working with expressions, particularly for generating
+/// getters and setters for properties, and for working with attributes and members.
 /// </summary>
 public static class ExpressionUtility<T>
 {
@@ -19,14 +18,17 @@ public static class ExpressionUtility<T>
     /// <typeparam name="TEntity">Type of the entity containing the property.</typeparam>
     /// <typeparam name="TProperty">Type of the property for which the getter is being created.</typeparam>
     /// <param name="name">Name of the property.</param>
-    /// <returns>A function that gets the value of the specified property from an instance of the entity.</returns>
+    /// <returns>
+    /// A function that gets the value of the specified property from an instance of the entity.
+    /// </returns>
     /// <example>
-    /// This example demonstrates how to create and use a getter for the "Name" and "BirthDate" properties of an "Employee" class:
+    /// This example demonstrates how to create and use a getter for the "Name" and "BirthDate"
+    /// properties of an "Employee" class:
     /// <code>
-    /// var getterNameProperty = ExpressionUtils.CreateGetter&lt;Employee, string&gt;("Name");
-    /// var getterBirthDateProperty = ExpressionUtils.CreateGetter&lt;Employee, DateTime&gt;("BirthDate");
-    /// var name = getterNameProperty(emp1);
-    /// var birthDate = getterBirthDateProperty(emp1);
+    ///var getterNameProperty = ExpressionUtils.CreateGetter&lt;Employee, string&gt;("Name");
+    ///var getterBirthDateProperty = ExpressionUtils.CreateGetter&lt;Employee, DateTime&gt;("BirthDate");
+    ///var name = getterNameProperty(emp1);
+    ///var birthDate = getterBirthDateProperty(emp1);
     /// </code>
     /// </example>
     public static Func<TEntity, TProperty> CreateGetter<TEntity, TProperty>(string name) where TEntity : class
@@ -44,14 +46,17 @@ public static class ExpressionUtility<T>
     /// <typeparam name="TEntity">Type of the entity containing the property.</typeparam>
     /// <typeparam name="TProperty">Type of the property for which the setter is being created.</typeparam>
     /// <param name="name">Name of the property.</param>
-    /// <returns>An action that sets the value of the specified property on an instance of the entity.</returns>
+    /// <returns>
+    /// An action that sets the value of the specified property on an instance of the entity.
+    /// </returns>
     /// <example>
-    /// This example demonstrates how to create and use a setter for the "Name" and "BirthDate" properties of an "Employee" class:
+    /// This example demonstrates how to create and use a setter for the "Name" and "BirthDate"
+    /// properties of an "Employee" class:
     /// <code>
-    /// var setterNameProperty = ExpressionUtils.CreateSetter&lt;Employee, string&gt;("Name");
-    /// var setterBirthDateProperty = ExpressionUtils.CreateSetter&lt;Employee, DateTime&gt;("BirthDate");
-    /// setterNameProperty(emp, "John");
-    /// setterBirthDateProperty(emp, new DateTime(1990, 6, 5));
+    ///var setterNameProperty = ExpressionUtils.CreateSetter&lt;Employee, string&gt;("Name");
+    ///var setterBirthDateProperty = ExpressionUtils.CreateSetter&lt;Employee, DateTime&gt;("BirthDate");
+    ///setterNameProperty(emp, "John");
+    ///setterBirthDateProperty(emp, new DateTime(1990, 6, 5));
     /// </code>
     /// </example>
     public static Action<TEntity, TProperty> CreateSetter<TEntity, TProperty>(string name) where TEntity : class
@@ -128,7 +133,8 @@ public static class ExpressionUtility<T>
     }
 
     /// <summary>
-    /// Sets the value of a deep property (a property that might be nested within other properties or fields) on the given object.
+    /// Sets the value of a deep property (a property that might be nested within other properties
+    /// or fields) on the given object.
     /// </summary>
     /// <typeparam name="TObject">Type of the target object.</typeparam>
     /// <param name="target">Target object on which the property value should be set.</param>

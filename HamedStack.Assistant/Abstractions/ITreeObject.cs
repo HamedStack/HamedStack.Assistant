@@ -29,9 +29,7 @@ public interface ITreeObject<T>
     /// <summary>
     /// Gets or sets the identifier of the parent tree node, if any.
     /// </summary>
-    /// <remarks>
-    /// If this property is null, it indicates that this tree node is a root node.
-    /// </remarks>
+    /// <remarks>If this property is null, it indicates that this tree node is a root node.</remarks>
     /// <value>The identifier of the parent tree node or null if it's a root node.</value>
     T? ParentId { get; set; }
 }

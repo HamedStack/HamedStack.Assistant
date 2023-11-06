@@ -78,10 +78,51 @@ public static class PathUtility
     }
 
     /// <summary>
+    /// Gets the full path to a specific assembly in the runtime directory.
+    /// </summary>
+    /// <param name="assemblyName">The name of the assembly (e.g., "mscorlib.dll").</param>
+    /// <returns>A <see cref="System.String"/> representing the full path to the assembly.</returns>
+    public static string GetRuntimeAssemblyPath(string assemblyName)
+    {
+        if (string.IsNullOrWhiteSpace(assemblyName))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(assemblyName));
+        return Path.Combine(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory(), assemblyName);
+    }
+
+    /// <summary>
+    /// Gets the runtime directory where the .NET assemblies are located.
+    /// </summary>
+    /// <returns>A <see cref="System.String"/> representing the runtime directory path.</returns>
+    public static string GetRuntimeDirectory()
+    {
+        return System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+    }
+
+    /// <summary>
+    /// Retrieves the runtime directory of the current .NET installation and enumerates all the .dll
+    /// files within it and its subdirectories.
+    /// </summary>
+    /// <param name="assemblies">
+    /// When this method returns, contains an <see cref="IEnumerable{T}"/> of <see cref="string"/>
+    /// objects representing the full paths to all the .dll files found in the runtime directory and
+    /// its subdirectories.
+    /// </param>
+    /// <returns>A <see cref="string"/> representing the full path to the runtime directory.</returns>
+    public static string GetRuntimeDirectory(out IEnumerable<string> assemblies)
+    {
+        var path = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+        assemblies = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
+        return path;
+    }
+
+    /// <summary>
     /// Determines whether the given path points to a directory.
     /// </summary>
     /// <param name="path">The path to evaluate.</param>
-    /// <returns>True if the path points to a directory, false if it points to a file, and null if the path does not exist.</returns>
+    /// <returns>
+    /// True if the path points to a directory, false if it points to a file, and null if the path
+    /// does not exist.
+    /// </returns>
     public static bool? IsDirectory(string path)
     {
         if (Directory.Exists(path))
@@ -95,7 +136,10 @@ public static class PathUtility
     /// Determines whether the given path points to a file.
     /// </summary>
     /// <param name="path">The path to evaluate.</param>
-    /// <returns>True if the path points to a file, false if it points to a directory, and null if the path does not exist.</returns>
+    /// <returns>
+    /// True if the path points to a file, false if it points to a directory, and null if the path
+    /// does not exist.
+    /// </returns>
     public static bool? IsFile(string path)
     {
         var isDir = IsDirectory(path);
@@ -131,48 +175,5 @@ public static class PathUtility
         }
 
         return isValid;
-    }
-
-    /// <summary>
-    /// Gets the runtime directory where the .NET assemblies are located.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="System.String"/> representing the runtime directory path.
-    /// </returns>
-    public static string GetRuntimeDirectory()
-    {
-        return System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
-    }
-    
-    /// <summary>
-    /// Retrieves the runtime directory of the current .NET installation
-    /// and enumerates all the .dll files within it and its subdirectories.
-    /// </summary>
-    /// <param name="assemblies">
-    /// When this method returns, contains an <see cref="IEnumerable{T}"/> of <see cref="string"/> objects
-    /// representing the full paths to all the .dll files found in the runtime directory and its subdirectories.
-    /// </param>
-    /// <returns>
-    /// A <see cref="string"/> representing the full path to the runtime directory.
-    /// </returns>
-    public static string GetRuntimeDirectory(out IEnumerable<string> assemblies)
-    {
-        var path =  System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
-        assemblies = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
-        return path;
-    }
-
-    /// <summary>
-    /// Gets the full path to a specific assembly in the runtime directory.
-    /// </summary>
-    /// <param name="assemblyName">The name of the assembly (e.g., "mscorlib.dll").</param>
-    /// <returns>
-    /// A <see cref="System.String"/> representing the full path to the assembly.
-    /// </returns>
-    public static string GetRuntimeAssemblyPath(string assemblyName)
-    {
-        if (string.IsNullOrWhiteSpace(assemblyName))
-            throw new ArgumentException("Value cannot be null or whitespace.", nameof(assemblyName));
-        return Path.Combine(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory(), assemblyName);
     }
 }

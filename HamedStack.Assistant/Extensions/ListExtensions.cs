@@ -2,13 +2,13 @@
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
+using HamedStack.Assistant.Extensions.EnumerableExtended;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using HamedStack.Assistant.Extensions.EnumerableExtended;
 
 namespace HamedStack.Assistant.Extensions.ListExtended;
 
@@ -22,7 +22,7 @@ public static class ListExtensions
         if (items == null) throw new ArgumentNullException(nameof(items));
         foreach (var item in items) list.Add(item);
     }
-    public static ReadOnlyCollection<T> AsReadOnly<T>(this IList<T> list) => new(list);
+
     public static void AddRangeUnique<T>(this IList<T> list, T[] items) where T : class
     {
         foreach (var item in items)
@@ -103,6 +103,8 @@ public static class ListExtensions
     {
         return list?.Any() == true;
     }
+
+    public static ReadOnlyCollection<T> AsReadOnly<T>(this IList<T> list) => new(list);
 
     public static Span<T> AsSpan<T>(this List<T>? list)
     {

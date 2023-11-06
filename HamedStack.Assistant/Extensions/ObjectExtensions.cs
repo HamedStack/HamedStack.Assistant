@@ -4,6 +4,9 @@
 // ReSharper disable InconsistentNaming
 // ReSharper disable IdentifierTypo
 
+using HamedStack.Assistant.Extensions.TypeExtended;
+using HamedStack.Assistant.Implementations;
+using HamedStack.Assistant.Implementations.Internals;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -15,9 +18,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using HamedStack.Assistant.Extensions.TypeExtended;
-using HamedStack.Assistant.Implementations;
-using HamedStack.Assistant.Implementations.Internals;
 
 namespace HamedStack.Assistant.Extensions.ObjectExtended;
 
@@ -90,14 +90,14 @@ public static partial class ObjectExtensions
 
     public static T CastAs<T>(this object @this)
     {
-        return (T) @this;
+        return (T)@this;
     }
 
     public static T? CastAsOrDefault<T>(this object @this)
     {
         try
         {
-            return (T) @this;
+            return (T)@this;
         }
         catch (Exception)
         {
@@ -109,7 +109,7 @@ public static partial class ObjectExtensions
     {
         try
         {
-            return (T) @this;
+            return (T)@this;
         }
         catch (Exception)
         {
@@ -121,7 +121,7 @@ public static partial class ObjectExtensions
     {
         try
         {
-            return (T) @this;
+            return (T)@this;
         }
         catch (Exception)
         {
@@ -133,7 +133,7 @@ public static partial class ObjectExtensions
     {
         try
         {
-            return (T) @this;
+            return (T)@this;
         }
         catch (Exception)
         {
@@ -141,7 +141,7 @@ public static partial class ObjectExtensions
         }
     }
 
-    public static T CastTo<T>(this object o) => (T) o;
+    public static T CastTo<T>(this object o) => (T)o;
 
     public static object ChangeType(this object value, TypeCode typeCode)
     {
@@ -165,12 +165,12 @@ public static partial class ObjectExtensions
 
     public static object ChangeType<T>(this object value)
     {
-        return (T) Convert.ChangeType(value, typeof(T));
+        return (T)Convert.ChangeType(value, typeof(T));
     }
 
     public static object ChangeType<T>(this object value, IFormatProvider provider)
     {
-        return (T) Convert.ChangeType(value, typeof(T), provider);
+        return (T)Convert.ChangeType(value, typeof(T), provider);
     }
 
     public static T? Coalesce<T>(this T? @this, params T?[] values) where T : class
@@ -218,15 +218,15 @@ public static partial class ObjectExtensions
         {
             var targetType = typeof(T);
 
-            if (value.GetType() == targetType) return (T) value;
+            if (value.GetType() == targetType) return (T)value;
 
             var converter = TypeDescriptor.GetConverter(value);
             if (converter.CanConvertTo(targetType))
-                return (T?) converter.ConvertTo(value, targetType);
+                return (T?)converter.ConvertTo(value, targetType);
 
             converter = TypeDescriptor.GetConverter(targetType);
             if (converter.CanConvertFrom(value.GetType()))
-                return (T?) converter.ConvertFrom(value);
+                return (T?)converter.ConvertFrom(value);
         }
 
         return defaultValue;
@@ -257,7 +257,7 @@ public static partial class ObjectExtensions
 
     public static T[] CreateArray<T>(this T obj)
     {
-        return new[] {obj};
+        return new[] { obj };
     }
 
     public static ICollection<T> CreateCollection<T>(this T obj)
@@ -268,7 +268,7 @@ public static partial class ObjectExtensions
     public static IDictionary<TKey, TValue> CreateDictionary<TKey, TValue>(this TValue value, TKey key)
         where TKey : notnull
     {
-        return new Dictionary<TKey, TValue> {{key, value}};
+        return new Dictionary<TKey, TValue> { { key, value } };
     }
 
     public static IEnumerable<T> CreateEnumerable<T>(this T obj)
@@ -278,7 +278,7 @@ public static partial class ObjectExtensions
 
     public static IList<T> CreateList<T>(this T obj)
     {
-        return new List<T> {obj};
+        return new List<T> { obj };
     }
 
     public static IReadOnlyCollection<T> CreateReadOnlyCollection<T>(this T obj)
@@ -309,7 +309,7 @@ public static partial class ObjectExtensions
         var isEnumerable = obj.GetType().IsCollection();
         if (!isEnumerable) return obj.GetNestedPropertyValue(propertyPath, printable);
 
-        var objects = (from object? o in (IEnumerable) obj select o.GetNestedPropertyValue(propertyPath)).ToList();
+        var objects = (from object? o in (IEnumerable)obj select o.GetNestedPropertyValue(propertyPath)).ToList();
         var options = new JsonSerializerOptions
         {
             WriteIndented = true
@@ -428,7 +428,7 @@ public static partial class ObjectExtensions
         if (item == null) throw new ArgumentNullException(nameof(item));
         if (action == null) throw new ArgumentNullException(nameof(action));
 
-        if (item is not T) action((T) item);
+        if (item is not T) action((T)item);
     }
 
     public static T IfNull<T>(this T obj, Action action)
@@ -680,6 +680,35 @@ public static partial class ObjectExtensions
         return @this.GetType().IsValueType;
     }
 
+    /// <summary>
+    /// Maps properties from a source object to a destination object.
+    /// </summary>
+    /// <typeparam name="TSource">The type of the source object.</typeparam>
+    /// <typeparam name="TDestination">The type of the destination object.</typeparam>
+    /// <param name="source">The source object from which properties are to be copied.</param>
+    /// <param name="destination">The destination object to which properties will be copied.</param>
+    /// <returns>The destination object with properties mapped from the source object.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when either the source or destination is null.
+    /// </exception>
+    /// <remarks>
+    /// This extension method provides a convenient way to copy properties from a source object to a
+    /// destination object using the <see cref="LightObjectMapper"/>. The method ensures that both
+    /// source and destination objects are not null.
+    /// </remarks>
+    public static TDestination MapTo<TSource, TDestination>([DisallowNull] this TSource source,
+        [DisallowNull] TDestination destination)
+    {
+        if (source == null) throw new ArgumentNullException(nameof(source));
+        if (destination == null) throw new ArgumentNullException(nameof(destination));
+
+        var t = source.GetType();
+        var u = source.GetType();
+        var op = new LightObjectMapper();
+        op.MapTypes(t, u);
+        return destination;
+    }
+
     public static Func<T, TResult> Memoize<T, TResult>(this Func<T, TResult> func) where T : notnull
     {
         var t = new Dictionary<T, TResult>();
@@ -789,7 +818,7 @@ public static partial class ObjectExtensions
 
                     // Handle array and collection types The code here constructs the necessary
                     // expression to set an indexed element
-                    if (type is {IsArray: true})
+                    if (type is { IsArray: true })
                     {
                         expr = Expression.ArrayAccess(expr, Expression.Constant(arrayIndex));
                         type = type.GetElementType();
@@ -837,12 +866,12 @@ public static partial class ObjectExtensions
         if (@this == null) throw new ArgumentNullException(nameof(@this));
 
         var method = @this.GetType().GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
-        return (T?) method?.Invoke(@this, null);
+        return (T?)method?.Invoke(@this, null);
     }
 
     public static T[] ToArrayObject<T>(this T obj)
     {
-        return new[] {obj};
+        return new[] { obj };
     }
 
     public static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(this T item)
@@ -897,7 +926,7 @@ public static partial class ObjectExtensions
             return enumerable.Cast<object?>();
         }
 
-        return new[] {obj};
+        return new[] { obj };
     }
 
     public static Expression ToObjectConstantExpression(this object value)
@@ -1067,32 +1096,6 @@ public static partial class ObjectExtensions
         yield return item;
     }
 
-    /// <summary>
-    /// Maps properties from a source object to a destination object.
-    /// </summary>
-    /// <typeparam name="TSource">The type of the source object.</typeparam>
-    /// <typeparam name="TDestination">The type of the destination object.</typeparam>
-    /// <param name="source">The source object from which properties are to be copied.</param>
-    /// <param name="destination">The destination object to which properties will be copied.</param>
-    /// <returns>The destination object with properties mapped from the source object.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when either the source or destination is null.</exception>
-    /// <remarks>
-    /// This extension method provides a convenient way to copy properties from a source object to a destination object 
-    /// using the <see cref="LightObjectMapper"/>. The method ensures that both source and destination objects are not null.
-    /// </remarks>
-    public static TDestination MapTo<TSource, TDestination>([DisallowNull] this TSource source,
-        [DisallowNull] TDestination destination)
-    {
-        if (source == null) throw new ArgumentNullException(nameof(source));
-        if (destination == null) throw new ArgumentNullException(nameof(destination));
-
-        var t = source.GetType();
-        var u = source.GetType();
-        var op = new LightObjectMapper();
-        op.MapTypes(t, u);
-        return destination;
-    }
-
     private static object GetNestedPropertyValue(this object obj, string propertyPath, bool printable = false)
     {
         // Throws an ArgumentNullException if the object is null.
@@ -1146,7 +1149,7 @@ public static partial class ObjectExtensions
                 if (int.TryParse(indexValue, out var arrayIndex))
                 {
                     // If the type is an array.
-                    if (type is {IsArray: true})
+                    if (type is { IsArray: true })
                     {
                         expr = Expression.ArrayIndex(expr, Expression.Constant(arrayIndex));
                         type = type.GetElementType();
@@ -1178,8 +1181,8 @@ public static partial class ObjectExtensions
                     }
                     else
                     {
-                        keyValue = keyType.GetMethod("Parse", new[] {typeof(string)})
-                            ?.Invoke(null, new object[] {indexValue});
+                        keyValue = keyType.GetMethod("Parse", new[] { typeof(string) })
+                            ?.Invoke(null, new object[] { indexValue });
                     }
 
                     if (propertyInfo2 == null) continue;

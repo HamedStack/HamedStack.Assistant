@@ -1,5 +1,4 @@
-﻿
-// ReSharper disable UnusedType.Global
+﻿// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable StringLiteralTypo
 
@@ -17,7 +16,9 @@ public static class SqlDbTypeUtility
     /// </summary>
     /// <param name="sqlDataType">The SQL data type as a string (e.g., "varchar").</param>
     /// <returns>The name of the corresponding .NET type (e.g., "String").</returns>
-    /// <exception cref="KeyNotFoundException">Thrown when the provided SQL data type doesn't have a corresponding .NET type.</exception>
+    /// <exception cref="KeyNotFoundException">
+    /// Thrown when the provided SQL data type doesn't have a corresponding .NET type.
+    /// </exception>
     public static string FromString(string sqlDataType)
     {
         sqlDataType = sqlDataType.ToLower().Trim();
@@ -61,7 +62,9 @@ public static class SqlDbTypeUtility
     /// </summary>
     /// <param name="sqlDataType">The SQL data type as a string (e.g., "varchar").</param>
     /// <returns>The corresponding .NET type (e.g., typeof(string)).</returns>
-    /// <exception cref="KeyNotFoundException">Thrown when the provided SQL data type doesn't have a corresponding .NET type.</exception>
+    /// <exception cref="KeyNotFoundException">
+    /// Thrown when the provided SQL data type doesn't have a corresponding .NET type.
+    /// </exception>
     public static Type ToType(string sqlDataType)
     {
         sqlDataType = sqlDataType.ToLower().Trim();

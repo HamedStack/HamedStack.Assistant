@@ -3,29 +3,20 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedType.Global
 
+using HamedStack.Assistant.Extensions.EnumerableExtended;
+using HamedStack.Assistant.Extensions.IntExtended;
+using HamedStack.Assistant.Extensions.StringExtended;
 using System.Collections;
 using System.Collections.Immutable;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using HamedStack.Assistant.Extensions.EnumerableExtended;
-using HamedStack.Assistant.Extensions.IntExtended;
-using HamedStack.Assistant.Extensions.StringExtended;
 
 namespace HamedStack.Assistant.Extensions.ArrayExtended;
 
 public static class ArrayExtensions
 {
-    public static bool ArrayEquals<T>(this T[]? array1, T[]? array2)
-    {
-        if (ReferenceEquals(array1, array2)) return true;
-        if (array1 is null || array2 is null) return false;
-
-        if (array1.Length != array2.Length) return false;
-        return !array1.Where((t, i) => !EqualityComparer<T>.Default.Equals(t, array2[i])).Any();
-    }
-
     public static bool All<T>(this T[] array, Func<T, bool> predicate)
     {
         if (array == null) throw new ArgumentNullException(nameof(array));
@@ -76,6 +67,15 @@ public static class ArrayExtensions
         if (array == null) throw new ArgumentNullException(nameof(array));
 
         return array.Any();
+    }
+
+    public static bool ArrayEquals<T>(this T[]? array1, T[]? array2)
+    {
+        if (ReferenceEquals(array1, array2)) return true;
+        if (array1 is null || array2 is null) return false;
+
+        if (array1.Length != array2.Length) return false;
+        return !array1.Where((t, i) => !EqualityComparer<T>.Default.Equals(t, array2[i])).Any();
     }
 
     public static IEnumerable<T> AsImmutable<T>(this T[] items)
@@ -713,7 +713,7 @@ public static class ArrayExtensions
         if (source == null) throw new ArgumentNullException(nameof(source));
         if (chunkSize <= 0) throw new ArgumentOutOfRangeException(nameof(chunkSize));
         return source
-            .Select((x, i) => new {Index = i, Value = x})
+            .Select((x, i) => new { Index = i, Value = x })
             .GroupBy(x => x.Index / chunkSize)
             .Select(x => x.Select(v => v.Value));
     }
@@ -811,7 +811,7 @@ public static class ArrayExtensions
         for (var i = 0; i < items.Length; i++)
         {
             var val = items.GetValue(i);
-            list.Add((T?) val);
+            list.Add((T?)val);
         }
 
         return list;

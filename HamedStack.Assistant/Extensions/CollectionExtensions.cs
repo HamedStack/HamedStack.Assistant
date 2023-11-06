@@ -2,8 +2,8 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedType.Global
 
-using System.Collections;
 using HamedStack.Assistant.Extensions.EnumerableExtended;
+using System.Collections;
 
 namespace HamedStack.Assistant.Extensions.CollectionExtended;
 

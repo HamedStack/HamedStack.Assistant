@@ -3,8 +3,8 @@
 // ReSharper disable InconsistentNaming
 // ReSharper disable StringLiteralTypo
 
-using System.Net;
 using HamedStack.Assistant.Extensions.ByteArrayExtended;
+using System.Net;
 
 namespace HamedStack.Assistant.Extensions.LongExtended;
 

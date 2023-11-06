@@ -29,7 +29,10 @@ public class WeakRefKeyValueStore<TKey, TValue>
     /// Gets or sets the value associated with the specified key.
     /// </summary>
     /// <param name="key">The key of the value to get or set.</param>
-    /// <returns>The value associated with the specified key. Throws a KeyNotFoundException if the key does not exist in the store.</returns>
+    /// <returns>
+    /// The value associated with the specified key. Throws a KeyNotFoundException if the key does
+    /// not exist in the store.
+    /// </returns>
     public TValue? this[TKey key]
     {
         get
@@ -151,7 +154,10 @@ public class WeakRefKeyValueStore<TKey, TValue>
     /// Attempts to get the value associated with the specified key.
     /// </summary>
     /// <param name="key">The key.</param>
-    /// <param name="value">When this method returns, contains the value associated with the specified key, if found; otherwise, null.</param>
+    /// <param name="value">
+    /// When this method returns, contains the value associated with the specified key, if found;
+    /// otherwise, null.
+    /// </param>
     /// <returns>true if the key was found; otherwise, false.</returns>
     public bool TryGet(TKey key, out TValue? value)
     {

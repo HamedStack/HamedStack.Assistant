@@ -2,16 +2,16 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedMember.Global
 
+using HamedStack.Assistant.Enums;
+using HamedStack.Assistant.Extensions.ObjectExtended;
+using HamedStack.Assistant.Extensions.StringExtended;
+using HamedStack.Assistant.Implementations;
 using System.Collections;
 using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using HamedStack.Assistant.Enums;
-using HamedStack.Assistant.Extensions.StringExtended;
-using HamedStack.Assistant.Extensions.ObjectExtended;
-using HamedStack.Assistant.Implementations;
 
 namespace HamedStack.Assistant.Extensions.TypeExtended;
 
@@ -126,6 +126,7 @@ public static class TypeExtensions
     {
         return Activator.CreateInstance(type)!;
     }
+
     public static LambdaExpression CreateExpression(this Type type, string propertyName)
     {
         var param = Expression.Parameter(type, "x");
@@ -974,6 +975,7 @@ public static class TypeExtensions
         genericType = type.GetGenericArguments().FirstOrDefault();
         return genericType != null || true;
     }
+
     public static bool IsEnumerableOfT(this Type type)
     {
         return type.GetInterfaces().Any(x => x.IsGenericType

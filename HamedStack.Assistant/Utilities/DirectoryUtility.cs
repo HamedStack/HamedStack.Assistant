@@ -1,5 +1,4 @@
-﻿
-// ReSharper disable UnusedType.Global
+﻿// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -46,21 +45,6 @@ public static class DirectoryUtility
     }
 
     /// <summary>
-    /// Retrieves an enumerable collection of parent directory paths for the specified path recursively.
-    /// </summary>
-    /// <param name="path">The path for which to retrieve parent directory paths.</param>
-    /// <returns>An enumerable collection of parent directory paths.</returns>
-    public static IEnumerable<string> GetParentsRecursively(string path)
-    {
-        var parentDirPath = Path.GetDirectoryName(path);
-        while (!string.IsNullOrEmpty(parentDirPath))
-        {
-            yield return parentDirPath;
-            parentDirPath = Path.GetDirectoryName(parentDirPath);
-        }
-    }
-    
-    /// <summary>
     /// Creates a new temporary directory and returns its path.
     /// </summary>
     /// <returns>The path of the created temporary directory.</returns>
@@ -73,10 +57,13 @@ public static class DirectoryUtility
     }
 
     /// <summary>
-    /// Creates a temporary directory, executes the provided action with the directory path, and optionally deletes it afterwards.
+    /// Creates a temporary directory, executes the provided action with the directory path, and
+    /// optionally deletes it afterwards.
     /// </summary>
     /// <param name="action">The action to be executed.</param>
-    /// <param name="autoDelete">Determines whether to delete the temporary directory after executing the action.</param>
+    /// <param name="autoDelete">
+    /// Determines whether to delete the temporary directory after executing the action.
+    /// </param>
     public static void CreateTempDirectory(Action<string> action, bool autoDelete = true)
     {
         var tempDirectory = GetTempDirectory();
@@ -157,6 +144,21 @@ public static class DirectoryUtility
     public static string? GetParentDirectoryPath(string folderPath)
     {
         return GetParentDirectoryPath(folderPath, 1);
+    }
+
+    /// <summary>
+    /// Retrieves an enumerable collection of parent directory paths for the specified path recursively.
+    /// </summary>
+    /// <param name="path">The path for which to retrieve parent directory paths.</param>
+    /// <returns>An enumerable collection of parent directory paths.</returns>
+    public static IEnumerable<string> GetParentsRecursively(string path)
+    {
+        var parentDirPath = Path.GetDirectoryName(path);
+        while (!string.IsNullOrEmpty(parentDirPath))
+        {
+            yield return parentDirPath;
+            parentDirPath = Path.GetDirectoryName(parentDirPath);
+        }
     }
 
     /// <summary>
