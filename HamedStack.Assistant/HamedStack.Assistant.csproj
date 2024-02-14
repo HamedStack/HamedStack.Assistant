@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -7,7 +7,7 @@
         <Authors>Hamed Fathi</Authors>
         <Company />
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <Version>1.0.2</Version>
+        <Version>1.0.3</Version>
         <Description>A huge collection of useful extension methods, utilities and types for the .NET ecosystem.</Description>
         <LangVersion>latest</LangVersion>
         <PackageProjectUrl>https://github.com/HamedStack/HamedStack.Assistant</PackageProjectUrl>
@@ -17,10 +17,6 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
-      <Compile Remove="Extensions\TaskExtensions.Tuples.cs" />
-    </ItemGroup>
-    <ItemGroup>
         <None Include="..\README.md" Pack="true" PackagePath="\" />
-        <None Include="Extensions\TaskExtensions.Tuples.cs" />
     </ItemGroup>
 </Project>

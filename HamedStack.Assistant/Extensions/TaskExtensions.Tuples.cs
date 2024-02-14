@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// ReSharper disable CheckNamespace
+// ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedType.Global
+
+using System.Runtime.CompilerServices;
 
 namespace HamedStack.Assistant.Extensions.TaskExtended;
 
