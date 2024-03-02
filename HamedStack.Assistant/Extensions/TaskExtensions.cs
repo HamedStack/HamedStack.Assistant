@@ -83,8 +83,16 @@ public static partial class TaskExtensions
         return await source;
     }
 
+    public static T Await<T>(this Task<T> task)
+    {
+        return task.GetAwaiter().GetResult();
+    }
+    public static void Await(this Task task)
+    {
+        task.GetAwaiter().GetResult();
+    }
     public static async Task<IEnumerable<TSource>> DequeueAsEnumerable<TSource>(
-        this Task<Queue<TSource>> source)
+            this Task<Queue<TSource>> source)
     {
         return (await source).DequeueAsEnumerable();
     }
@@ -457,7 +465,6 @@ public static partial class TaskExtensions
             throw new TimeoutException();
         }
     }
-
     public static async Task<TResult> WaitAsync<TResult>(this Task<TResult> task, TimeSpan timeout)
     {
         using var timeoutCancellationTokenSource = new CancellationTokenSource();
