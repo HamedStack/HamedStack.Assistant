@@ -1,6 +1,7 @@
 ﻿// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
+using HamedStack.Assistant.Extensions.AssemblyExtended;
 using System.Reflection;
 
 namespace HamedStack.Assistant.Utilities;
@@ -10,6 +11,11 @@ namespace HamedStack.Assistant.Utilities;
 /// </summary>
 public static class AssemblyUtility
 {
+    public static IEnumerable<Assembly> AppDomainContains(params Type[] types)
+    {
+        return AppDomain.CurrentDomain.GetAssemblies().Where(a => a.Contains(types));
+    }
+
     /// <summary>
     /// Retrieves the entry assembly and all its referenced assemblies.
     /// </summary>

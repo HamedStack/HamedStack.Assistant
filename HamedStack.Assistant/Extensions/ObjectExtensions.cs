@@ -23,12 +23,13 @@ namespace HamedStack.Assistant.Extensions.ObjectExtended;
 
 public static partial class ObjectExtensions
 {
+    private static readonly ConcurrentDictionary<string, object?> CachedData = new();
+
     // Concurrent dictionary cache to store compiled functions for property access
     private static readonly ConcurrentDictionary<string, Func<object, object>> GetCache = new();
 
     // Concurrent dictionary cache to store compiled functions for property assignment
     private static readonly ConcurrentDictionary<string, Action<object, object>?> SetCache = new();
-
     public static PropertyAccessor<T> AccessProperty<T>(this T obj, string propertyName)
     {
         if (obj == null) throw new ArgumentNullException(nameof(obj));
@@ -70,6 +71,21 @@ public static partial class ObjectExtensions
         return new Lazy<T>();
     }
 
+    public static object? Cache(this object obj, string cacheKey)
+    {
+        if (string.IsNullOrWhiteSpace(cacheKey))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(cacheKey));
+        
+        return CachedData.GetOrAdd(cacheKey, _ => obj);
+    }
+
+    public static T? Cache<T>(this T? obj, string cacheKey)
+    {
+        if (string.IsNullOrWhiteSpace(cacheKey))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(cacheKey));
+        
+        return (T?)CachedData.GetOrAdd(cacheKey, _ => obj);
+    }
     public static bool CanConvertTo<T>(this object? value)
     {
         if (value != null)

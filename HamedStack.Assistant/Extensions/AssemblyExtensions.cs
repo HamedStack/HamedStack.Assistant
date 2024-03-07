@@ -7,6 +7,12 @@ namespace HamedStack.Assistant.Extensions.AssemblyExtended;
 
 public static class AssemblyExtensions
 {
+    public static bool Contains(this Assembly assembly, params Type[] types)
+    {
+        var assemblyTypes = assembly.GetTypes().SelectMany(t => new[] { t }.Concat(t.GetNestedTypes()));
+        return types.Any(type => assemblyTypes.Contains(type));
+    }
+
     public static string GetManifestResourceAsString(this Assembly assembly, string resourceName)
     {
         if (assembly == null) throw new ArgumentNullException(nameof(assembly));
