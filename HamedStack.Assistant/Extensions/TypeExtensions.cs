@@ -81,7 +81,6 @@ public static class TypeExtensions
         var closedType = openType.MakeGenericType(parameterTypes);
         return (T)Activator.CreateInstance(closedType, ctorArgument1, ctorArgument2)!;
     }
-
     public static bool Closes(this Type? type, Type openType)
     {
         if (type == null)
@@ -711,6 +710,18 @@ public static class TypeExtensions
         throw new ArgumentException("Invalid type");
     }
 
+    public static string GetTypeKey(this Type type)
+    {
+        var aqn = type.AssemblyQualifiedName;
+        if (string.IsNullOrEmpty(aqn))
+        {
+            var fullName = type.FullName;
+            return string.IsNullOrEmpty(fullName) ? type.Name : fullName;
+        }
+        var parts = aqn.Split(',');
+        var result = $"{parts[0].Trim()}.{parts[1].Trim()}";
+        return result;
+    }
     public static bool HasAttribute<T>(this Type type) where T : Attribute
     {
         return type.GetTypeInfo().GetCustomAttributes<T>().Any();
