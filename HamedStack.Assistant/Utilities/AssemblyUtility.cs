@@ -16,6 +16,61 @@ public static class AssemblyUtility
         return AppDomain.CurrentDomain.GetAssemblies().Where(a => a.Contains(types));
     }
 
+    public static IEnumerable<Assembly> FindAssembliesOfInterface(Type interfaceType)
+    {
+        var appAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        var assemblies = new HashSet<Assembly>();
+
+        foreach (var assembly in appAssemblies)
+        {
+            foreach (var type in assembly.GetTypes())
+            {
+                if (!type.IsClass || type.IsAbstract) continue;
+
+                var interfaces = type.GetInterfaces();
+                foreach (var @interface in interfaces)
+                {
+                    if (@interface == interfaceType ||
+                        (@interface.IsGenericType && @interface.GetGenericTypeDefinition() == interfaceType))
+                    {
+                        assemblies.Add(assembly);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return assemblies;
+    }
+
+    public static IEnumerable<Type> FindImplementationsOfInterface(Type interfaceType)
+    {
+        var appAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        var implementations = new HashSet<Type>();
+
+        foreach (var assembly in appAssemblies)
+        {
+            foreach (var type in assembly.GetTypes())
+            {
+                if (!type.IsClass || type.IsAbstract) continue;
+
+                var interfaces = type.GetInterfaces();
+                foreach (var @interface in interfaces)
+                {
+                    if (@interface == interfaceType ||
+                        (@interface.IsGenericType && @interface.GetGenericTypeDefinition() == interfaceType))
+                    {
+                        implementations.Add(type);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return implementations;
+    }
     /// <summary>
     /// Retrieves the entry assembly and all its referenced assemblies.
     /// </summary>
