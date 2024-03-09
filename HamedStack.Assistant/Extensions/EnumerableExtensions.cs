@@ -53,8 +53,26 @@ public static class EnumerableExtensions
         return returnValue;
     }
 
+    public static IEnumerable<TResult> AggregateBy<TSource, TKey, TAccumulate, TResult>(
+        this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector,
+        Func<TSource, TAccumulate> seedSelector,
+        Func<TAccumulate, TSource, TAccumulate> func,
+        Func<TKey, TAccumulate, TResult> resultSelector)
+    {
+        if (source == null) throw new ArgumentNullException(nameof(source));
+        if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+        if (seedSelector == null) throw new ArgumentNullException(nameof(seedSelector));
+        if (func == null) throw new ArgumentNullException(nameof(func));
+        if (resultSelector == null) throw new ArgumentNullException(nameof(resultSelector));
+
+        return source
+            .GroupBy(keySelector)
+            .Select(group => resultSelector(group.Key, group.Aggregate(seedSelector(group.First()), func)));
+    }
+
     public static TSource AggregateRight<TSource>(this IEnumerable<TSource> source,
-        Func<TSource, TSource, TSource> func)
+            Func<TSource, TSource, TSource> func)
     {
         var reversed = source.Reverse().ToList();
         return reversed.Aggregate((a, b) => func(b, a));
@@ -609,7 +627,6 @@ public static class EnumerableExtensions
     {
         return list.Any(item => item == null);
     }
-
     public static int Count(this IEnumerable enumerable, bool excludeNullValues = false)
     {
         var list = enumerable.Cast<object?>();
