@@ -3,6 +3,7 @@
 
 using HamedStack.Assistant.Extensions.AssemblyExtended;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace HamedStack.Assistant.Utilities;
 
@@ -16,61 +17,6 @@ public static class AssemblyUtility
         return AppDomain.CurrentDomain.GetAssemblies().Where(a => a.Contains(types));
     }
 
-    public static IEnumerable<Assembly> FindAssembliesOfInterface(Type interfaceType)
-    {
-        var appAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-        var assemblies = new HashSet<Assembly>();
-
-        foreach (var assembly in appAssemblies)
-        {
-            foreach (var type in assembly.GetTypes())
-            {
-                if (!type.IsClass || type.IsAbstract) continue;
-
-                var interfaces = type.GetInterfaces();
-                foreach (var @interface in interfaces)
-                {
-                    if (@interface == interfaceType ||
-                        (@interface.IsGenericType && @interface.GetGenericTypeDefinition() == interfaceType))
-                    {
-                        assemblies.Add(assembly);
-                        break;
-                    }
-                }
-            }
-        }
-
-        return assemblies;
-    }
-
-    public static IEnumerable<Type> FindImplementationsOfInterface(Type interfaceType)
-    {
-        var appAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-        var implementations = new HashSet<Type>();
-
-        foreach (var assembly in appAssemblies)
-        {
-            foreach (var type in assembly.GetTypes())
-            {
-                if (!type.IsClass || type.IsAbstract) continue;
-
-                var interfaces = type.GetInterfaces();
-                foreach (var @interface in interfaces)
-                {
-                    if (@interface == interfaceType ||
-                        (@interface.IsGenericType && @interface.GetGenericTypeDefinition() == interfaceType))
-                    {
-                        implementations.Add(type);
-                        break;
-                    }
-                }
-            }
-        }
-
-        return implementations;
-    }
     /// <summary>
     /// Retrieves the entry assembly and all its referenced assemblies.
     /// </summary>
@@ -88,5 +34,73 @@ public static class AssemblyUtility
         listOfAssemblies.Add(mainAsm);
         listOfAssemblies.AddRange(mainAsm.GetReferencedAssemblies().Select(Assembly.Load));
         return listOfAssemblies;
+    }
+
+    public static string GetRuntimeAssemblyPath(string assemblyName)
+    {
+        if (string.IsNullOrWhiteSpace(assemblyName))
+            throw new ArgumentException($"{nameof(assemblyName)} cannot be null or whitespace.", nameof(assemblyName));
+        return Path.Combine(RuntimeEnvironment.GetRuntimeDirectory(), assemblyName);
+    }
+
+    public static string GetRuntimeDirectory()
+    {
+        return RuntimeEnvironment.GetRuntimeDirectory();
+    }
+
+    public static string GetRuntimeDirectory(out IEnumerable<string> assemblies)
+    {
+        var path = RuntimeEnvironment.GetRuntimeDirectory();
+        assemblies = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
+        return path;
+    }
+
+    public static IEnumerable<Assembly> GetRuntimeDirectoryAssemblies()
+    {
+        var assemblies = new List<Assembly>();
+        var path = RuntimeEnvironment.GetRuntimeDirectory();
+        var allDllFiles = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
+        foreach (var dllFile in allDllFiles)
+        {
+            try
+            {
+                var assemblyName = AssemblyName.GetAssemblyName(dllFile);
+                var loadedAssembly = Assembly.Load(assemblyName);
+                assemblies.Add(loadedAssembly);
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+        return assemblies;
+    }
+
+    internal static IEnumerable<Assembly> GetAllAppDomainAssemblies()
+    {
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+
+        var assemblyDir = AppDomain.CurrentDomain.BaseDirectory;
+
+        var allDllFiles = Directory.GetFiles(assemblyDir, "*.dll", SearchOption.AllDirectories);
+
+        foreach (var dllFile in allDllFiles)
+        {
+            try
+            {
+                var assemblyName = AssemblyName.GetAssemblyName(dllFile);
+
+                if (assemblies.Any(a => a.FullName == assemblyName.FullName)) continue;
+
+                var loadedAssembly = Assembly.Load(assemblyName);
+                assemblies.Add(loadedAssembly);
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        return assemblies;
     }
 }

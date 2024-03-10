@@ -36,7 +36,6 @@ public static class TypeExtensions
         typeof(uint?),
         typeof(ulong?)
     };
-
     public static bool CanBeCastTo<T>(this Type? type)
     {
         if (type == null)
@@ -81,6 +80,7 @@ public static class TypeExtensions
         var closedType = openType.MakeGenericType(parameterTypes);
         return (T)Activator.CreateInstance(closedType, ctorArgument1, ctorArgument2)!;
     }
+
     public static bool Closes(this Type? type, Type openType)
     {
         if (type == null)
@@ -201,6 +201,82 @@ public static class TypeExtensions
             .ToDictionary(k => k.Key, k => k.Value);
     }
 
+    public static IEnumerable<Assembly> FindAssembliesWithImplementationsOf(this IEnumerable<Assembly> assemblies, Type targetType, bool containsTargetType = false)
+    {
+        var resultAssemblies = new HashSet<Assembly>();
+
+        foreach (var assembly in assemblies)
+        {
+            foreach (var type in assembly.GetTypes())
+            {
+                if (!type.IsClass || type.IsAbstract)
+                {
+                    continue;
+                }
+                if (type == targetType && containsTargetType)
+                {
+                    continue;
+                }
+
+                bool typeMatches;
+
+                if (targetType.IsGenericTypeDefinition)
+                {
+                    typeMatches = type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == targetType) ||
+                                  (type.BaseType != null && type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == targetType);
+                }
+                else
+                {
+                    typeMatches = targetType.IsAssignableFrom(type);
+                }
+
+                if (!typeMatches) continue;
+
+                resultAssemblies.Add(assembly);
+                break;
+            }
+        }
+
+        return resultAssemblies;
+    }
+
+    public static IEnumerable<Type> FindImplementationsOf(this IEnumerable<Assembly> assemblies, Type targetType, bool containsTargetType = false)
+    {
+        var types = new List<Type>();
+
+        foreach (var assembly in assemblies)
+        {
+            foreach (var type in assembly.GetTypes())
+            {
+                if (!type.IsClass || type.IsAbstract)
+                {
+                    continue;
+                }
+                if (type == targetType && containsTargetType)
+                {
+                    continue;
+                }
+
+                if (targetType.IsGenericTypeDefinition)
+                {
+                    if (type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == targetType) ||
+                        (type.BaseType is { IsGenericType: true } && type.BaseType.GetGenericTypeDefinition() == targetType))
+                    {
+                        types.Add(type);
+                    }
+                }
+                else
+                {
+                    if (targetType.IsAssignableFrom(type))
+                    {
+                        types.Add(type);
+                    }
+                }
+            }
+        }
+
+        return types;
+    }
     public static Type? FindInterfaceThatCloses(this Type type, Type openType)
     {
         if (type == typeof(object))
