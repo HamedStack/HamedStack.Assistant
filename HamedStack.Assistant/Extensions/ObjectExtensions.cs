@@ -157,6 +157,12 @@ public static partial class ObjectExtensions
         }
     }
 
+    public static T? CastByJsonSerializerTo<T>(this object obj)
+    {
+        var serialized = JsonSerializer.Serialize(obj);
+        return JsonSerializer.Deserialize<T>(serialized);
+    }
+
     public static T CastTo<T>(this object o) => (T)o;
 
     public static object ChangeType(this object value, TypeCode typeCode)
