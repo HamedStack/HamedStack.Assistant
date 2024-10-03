@@ -488,11 +488,6 @@ public static class DateTimeExtensions
         return time.SetTime(0, 0, 0, 0);
     }
 
-    public static double MillisecondsSince1970(this DateTime dt)
-    {
-        return dt.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
-    }
-
     /// <summary>
     /// Gets a DateTime representing the first date following the current date which falls on the
     /// given day of the week
@@ -986,21 +981,26 @@ public static class DateTimeExtensions
         return @this.ToString("U", culture);
     }
 
-    public static long ToUnixEpoch(this DateTime dateTime)
+    public static long ToUnixTimeSeconds(this DateTime dateTime)
     {
-        return (long)dateTime.MillisecondsSince1970();
+        var timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0);
+        return (long)timeSpan.TotalSeconds;
     }
 
-    public static long ToUnixTimestamp(this DateTime date)
+    public static long ToUnixTimeMilliseconds(this DateTime dateTime)
     {
-        var unixTimestamp = date.Ticks - new DateTime(1970, 1, 1).Ticks;
-        unixTimestamp /= TimeSpan.TicksPerSecond;
-        return unixTimestamp;
+        var timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0);
+        return timeSpan.Milliseconds;
     }
-
-    public static long ToUnixTimestamp(long ticks)
+    public static long ToUnixTimeMicroseconds(this DateTime dateTime)
     {
-        return new DateTime(ticks).ToUnixTimestamp();
+        var timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0);
+        return timeSpan.Microseconds;
+    }
+    public static long ToUnixTimeNanoseconds(this DateTime dateTime)
+    {
+        var timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0);
+        return timeSpan.Nanoseconds;
     }
 
     public static string ToUtcFormatString(this DateTime date)
