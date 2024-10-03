@@ -992,6 +992,8 @@ public static class DateTimeExtensions
         var timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0);
         return timeSpan.Milliseconds;
     }
+
+#if NET7_0_OR_GREATER
     public static long ToUnixTimeMicroseconds(this DateTime dateTime)
     {
         var timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0);
@@ -1002,6 +1004,7 @@ public static class DateTimeExtensions
         var timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0);
         return timeSpan.Nanoseconds;
     }
+#endif
 
     public static string ToUtcFormatString(this DateTime date)
     {
