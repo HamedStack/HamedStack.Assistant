@@ -1437,11 +1437,21 @@ public static class StringExtensions
         return notFoundValue;
     }
 
-    public static string? NullIfEmpty(this string @this)
+    public static string? NullIfEmpty(this string value)
     {
-        return @this == "" ? null : @this;
+        return string.IsNullOrWhiteSpace(value) ? null : value;
     }
 
+    public static string? OrIfNullOrEmpty(this string? value, string fallbackValue)
+    {
+        return string.IsNullOrWhiteSpace(value) ? fallbackValue : value;
+    }
+
+    public static string? EmptyIfNull(this string? value)
+    {
+        return value ?? string.Empty;
+    }
+    
     public static string? NullIfWhiteSpace(this string @this)
     {
         return !@this.IsNullOrWhiteSpace() ? @this : null;

@@ -416,6 +416,27 @@ public static partial class ObjectExtensions
         }
     }
 
+    public static T If<T>(this T source, bool condition, Func<T, T> then)
+    {
+        return condition ? then(source) : source;
+    }
+
+    public static TOut If<TIn, TOut>(this TIn source, bool condition, Func<TIn, TOut> then, Func<TIn, TOut> @else)
+    {
+        return condition ? then(source) : @else(source);
+    }
+
+    public static T If<T>(this T source, Func<T, bool> condition, Func<T, T> then)
+    {
+        return condition(source) ? then(source) : source;
+    }
+
+    public static TOut If<TIn, TOut>(this TIn source, Func<TIn, bool> condition, Func<TIn, TOut> then, Func<TIn, TOut> @else)
+    {
+        return condition(source) ? then(source) : @else(source);
+    }
+
+
     public static T IfNotNull<T>(this T obj, Action<T> action)
     {
         if (obj != null) action(obj);
